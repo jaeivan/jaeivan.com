@@ -1,15 +1,12 @@
 # jaeivan.com
 
-A neal.fun-style hub of small, independent web apps. Plain static HTML/CSS/JS with no build step, no framework and no npm dependencies. Deployed by GitHub Pages from `main` (custom domain in `CNAME`).
+@README.md
 
-## Structure
+No build step, no framework and no npm dependencies. Keep it that way.
 
-- `index.html` + `hub/`: the hub home page. `hub/apps.js` is the app registry; `hub/hub.js` builds the tiles from it.
-- `<slug>/`: each app is a self-contained top-level folder, served at `jaeivan.com/<slug>/`.
-- `_template/`: starter files for new apps. GitHub Pages doesn't publish it (underscore prefix).
-- `shared/hub-nav.css`: optional "← All apps" back button. It's the only shared code.
+## Deploying
 
-`hub/` and `shared/` are reserved and can't be used as app slugs.
+GitHub Pages publishes `main` to jaeivan.com, so anything merged into `main` goes live right away. IMPORTANT: never push to `main` directly. Every change goes through a PR from its own branch, with one app or feature per branch.
 
 ## Adding an app
 
@@ -24,16 +21,11 @@ A neal.fun-style hub of small, independent web apps. Plain static HTML/CSS/JS wi
 - Anything added to `shared/` must use a class prefix so its styles can't leak into apps.
 - Every app must work at phone width (375px) with no horizontal scroll.
 - Interactive elements must work with a keyboard: use real buttons, or add `tabindex`, `role` and Enter/Space handling.
-- One app or feature per branch/PR.
 
 ## Testing
 
-The `../` back links need a server, not `file://`. `.claude/launch.json` defines a `site` preview (`npx http-server` on port 8765). Before opening a PR, check in the browser:
+The `../` back links need a server, not `file://`. Use the `site` preview in `.claude/launch.json` (port 8765). Before opening a PR, check in the browser:
 - the hub tile opens the app
 - the app's main flows work
 - the back link returns to the hub
 - the layout holds at desktop and phone widths
-
-## Known issues
-
-- Marker Picker: Peach and Beige share `#F5CBA7`; the real Beige value is unknown.
