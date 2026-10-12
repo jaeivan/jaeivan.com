@@ -3,29 +3,22 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Marker Picker</title>
-        <link rel="stylesheet" href="styles.css">
+        <title>jaeivan</title>
+        <link rel="stylesheet" href="hub/hub.css">
     </head>
     <body>
-        <div class="app">
-            <header><h1>🎨 Marker Picker</h1></header>
-            <div class="toolbar">
-                <select id="mode">
-                    <option>Random</option>
-                    <option>Warm</option>
-                    <option>Cool</option>
-                    <option>Neutral</option>
-                </select>
-                <button id="pickBtn">Pick 4</button>
-                <button id="resetBtn">Reset</button>
-            </div>
-            <div class="chosen-section">
-                <h2>Selected Colors</h2>
-                <div id="chosenGrid"></div>
-            </div>
-            <p>Click markers to lock them.</p>
-            <div id="grid"></div>
-        </div>
-        <script src="script.js"></script>
+        <main class="hub">
+            <header class="hub-header">
+                <h1>jaeivan</h1>
+                <p>Little things I've made. Click one to play.</p>
+            </header>
+            <div id="apps"></div>
+            <noscript>
+                <p><a href="marker-picker/">🎨 Marker Picker</a></p>
+            </noscript>
+            <footer class="hub-footer">jaeivan.com</footer>
+        </main>
+        <script src="hub/apps.js"></script>
+        <script src="hub/hub.js"></script>
     </body>
 </html>

@@ -1,0 +1,28 @@
+/*
+ * Optional "back to hub" link that any app can include.
+ * Everything is namespaced under .hub-nav so it can't collide with app styles.
+ */
+.hub-nav {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .9);
+    border: 1px solid rgba(0, 0, 0, .08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+    color: #1f2937;
+    font: 600 .85rem/1 Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    text-decoration: none;
+    backdrop-filter: blur(6px);
+    transition: transform .15s, box-shadow .15s;
+}
+
+.hub-nav:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+}
