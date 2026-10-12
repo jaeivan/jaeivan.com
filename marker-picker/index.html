@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Marker Picker</title>
+        <link rel="stylesheet" href="../shared/hub-nav.css">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <a class="hub-nav" href="../">← All apps</a>
+        <div class="app">
+            <header><h1>🎨 Marker Picker</h1></header>
+            <div class="toolbar">
+                <select id="mode">
+                    <option>Random</option>
+                    <option>Warm</option>
+                    <option>Cool</option>
+                    <option>Neutral</option>
+                </select>
+                <button id="pickBtn">Pick 4</button>
+                <button id="resetBtn">Reset</button>
+            </div>
+            <div class="chosen-section">
+                <h2>Selected Colors</h2>
+                <div id="chosenGrid"></div>
+            </div>
+            <p>Click markers to lock them.</p>
+            <div id="grid"></div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>

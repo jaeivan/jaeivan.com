@@ -21,7 +21,7 @@ body {
 .app {
     max-width: 480px;
     margin: auto;
-    padding: 20px 16px 40px;
+    padding: 64px 16px 40px;
 }
 
 h1 {
@@ -89,6 +89,15 @@ select {
     transition: .2s;
 }
 
+#grid .marker {
+    cursor: pointer;
+}
+
+.marker:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 3px;
+}
+
 .marker.selected {
     transform: scale(1.08);
     border-color: #111827;
@@ -114,7 +123,7 @@ label {
 @media (max-width:420px) {
 
     .app {
-        padding: 16px 12px 30px;
+        padding: 60px 12px 30px;
     }
 
     #grid {

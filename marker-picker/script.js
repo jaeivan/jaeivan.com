@@ -163,17 +163,40 @@ function render() {
     if (selected.size && !selected.has(i)) d.classList.add("dim");
     if (selected.has(i)) d.classList.add("selected");
     if (locked.has(i)) d.classList.add("locked");
-    d.onclick = () => {
-      locked.has(i)
-        ? (locked.delete(i), selected.delete(i))
-        : locked.size < 4 && (locked.add(i), selected.add(i));
-      render();
+    d.tabIndex = 0;
+    d.setAttribute("role", "button");
+    d.setAttribute("aria-label", c[0]);
+    d.setAttribute("aria-pressed", locked.has(i));
+    d.onclick = () => toggleLock(i);
+    d.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleLock(i);
+      }
     };
     const l = document.createElement("label");
     l.textContent = c[0];
     card.append(d, l);
     grid.append(card);
   });
+}
+
+function toggleLock(i) {
+  if (locked.has(i)) {
+    locked.delete(i);
+    selected.delete(i);
+  } else if (locked.size < 4) {
+    // If all 4 slots are filled, drop the newest unlocked pick to make room.
+    if (!selected.has(i) && selected.size >= 4) {
+      const unlocked = [...selected].filter((s) => !locked.has(s));
+      selected.delete(unlocked[unlocked.length - 1]);
+    }
+    locked.add(i);
+    selected.add(i);
+  }
+  render();
+  // render() rebuilds the grid, so restore keyboard focus to the same marker.
+  grid.querySelectorAll(".marker")[i].focus();
 }
 
 function pick() {
