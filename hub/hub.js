@@ -21,17 +21,31 @@
     } else {
       art.textContent = app.emoji || "✨";
     }
-    if (isNew(app.added)) {
-      const badge = document.createElement("span");
-      badge.className = "tile-new";
-      badge.textContent = "New";
-      art.append(badge);
+    const badge = withinWeek(app.created) ? "New" : withinWeek(app.updated) ? "Updated" : "";
+    if (badge) {
+      const el = document.createElement("span");
+      el.className = `tile-badge tile-badge-${badge.toLowerCase()}`;
+      el.textContent = badge;
+      art.append(el);
     }
 
     const title = document.createElement("h2");
     title.textContent = app.title;
 
+    const dates = document.createElement("p");
+    dates.className = "tile-dates";
+    [["Created", app.created], ["Updated", app.updated]].forEach(([label, date]) => {
+      if (!date) return;
+      const span = document.createElement("span");
+      const time = document.createElement("time");
+      time.dateTime = date;
+      time.textContent = formatDate(date);
+      span.append(`${label} `, time);
+      dates.append(span);
+    });
+
     tile.append(art, title);
+    if (dates.childElementCount) tile.append(dates);
     grid.append(tile);
   });
 
@@ -116,9 +130,17 @@
   });
   new Image().src = "hub/logo.gif"; // preload so the first hover starts right away
 
-  // `added` is "YYYY-MM-DD"; apps count as new for 30 days.
-  function isNew(added) {
-    const age = Date.now() - Date.parse(added + "T00:00:00");
-    return age >= 0 && age < 30 * 24 * 60 * 60 * 1000;
+  // Dates in apps.js are "YYYY-MM-DD", read as local midnight.
+  function parseDate(date) {
+    const [y, m, d] = date.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+  function withinWeek(date) {
+    if (!date) return false;
+    const age = Date.now() - parseDate(date);
+    return age >= 0 && age < 7 * 24 * 60 * 60 * 1000;
+  }
+  function formatDate(date) {
+    return parseDate(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   }
 })();
