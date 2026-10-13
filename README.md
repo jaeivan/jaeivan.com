@@ -13,7 +13,7 @@ hub/             App registry (apps.js), tile rendering and hub styles
 shared/          hub-nav.css ("← All apps" button) and theme.js/.css (light/dark mode, used by every page)
 _template/       Starter files for a new app (ignored by GitHub Pages)
 _tools/          Build helpers, e.g. the pixel-art GIF encoder (ignored by GitHub Pages)
-<slug>/          One self-contained folder per app: marker-picker/, pokopia-doku/
+<slug>/          One self-contained folder per app: marker-picker/, pokopia-doku/, time-gap/
 ```
 
 Apps share no globals or styles. Everything in `shared/` is namespaced (`.hub-nav`, `.site-theme-toggle`, the `site-theme` storage key). `hub` and `shared` are reserved and can't be app slugs.
