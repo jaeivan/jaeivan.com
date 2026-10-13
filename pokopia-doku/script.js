@@ -38,6 +38,8 @@ const DIFFICULTY_PREF_KEY = "pokopia-doku:difficulty";
 // `ratings(rng)` returns the difficulty rating (1 easy – 3 hard) for each of the 6 headers.
 // Cells must have between minCell and maxCell valid answers.
 // guesses: null = unlimited. hints: how many per grid (Infinity = free). hintCostsGuess: Hard.
+// browse: listing a header's Pokémon in the picker, which uses a hint. "button" = its own option,
+// "hint" = offered as a kind of hint, false = not available.
 
 const DIFFICULTIES = {
     easy: {
@@ -49,6 +51,7 @@ const DIFFICULTIES = {
         showCounts: true,
         hints: Infinity,
         hintCostsGuess: false,
+        browse: "button",
     },
     medium: {
         label: "Medium",
@@ -59,6 +62,7 @@ const DIFFICULTIES = {
         showCounts: false,
         hints: 3,
         hintCostsGuess: false,
+        browse: "hint",
     },
     hard: {
         label: "Hard",
@@ -69,6 +73,7 @@ const DIFFICULTIES = {
         showCounts: false,
         hints: Infinity,
         hintCostsGuess: true,
+        browse: false,
     },
 };
 
@@ -628,7 +633,7 @@ function useHint() {
 
 function unlockBrowse() {
     const i = state.activeCell;
-    if (state.browseUnlocked[i] || !spendHint()) return;
+    if (!cfg().browse || state.browseUnlocked[i] || !spendHint()) return;
     state.browseUnlocked[i] = true;
     state.browseFilter = "row";
     saveDaily();
@@ -930,7 +935,8 @@ function renderPicker() {
     hintBtn.disabled = over || tier >= HINT_TIERS || hintsLeft() <= 0;
     hintBtn.textContent = tier >= HINT_TIERS ? "💡 No more hints" : `💡 Hint (${tier + 1}/${HINT_TIERS})`;
     const browseBtn = $("browseBtn");
-    browseBtn.hidden = state.browseUnlocked[i];
+    browseBtn.hidden = !cfg().browse || state.browseUnlocked[i];
+    browseBtn.textContent = cfg().browse === "hint" ? "💡 Hint: browse options" : "🔍 Browse options";
     browseBtn.disabled = over || hintsLeft() <= 0;
     $("hintCost").textContent = hintCostText();
 

@@ -3,7 +3,8 @@
  *
  * To add an app:
  *   1. Copy _template/ to <slug>/ (top level) and build it there.
- *   2. Add an entry below. `slug` must match the folder name.
+ *   2. Add an entry below. `slug` must match the folder name. The hub lists apps newest first
+ *      by `created`, whatever their order here.
  *
  * When you change an app, bump its `updated` date.
  *
@@ -37,6 +38,16 @@ window.HUB_APPS = [
     thumbnailStill: "tile-still.gif",
     color: "#EBE1F6",
     created: "2026-10-12",
+    updated: "2026-10-13",
+  },
+  {
+    slug: "time-gap",
+    title: "Time Gap",
+    description: "Which two moments in history are closer together?",
+    thumbnail: "tile.gif",
+    thumbnailStill: "tile-still.gif",
+    color: "#DDF0E4",
+    created: "2026-10-13",
     updated: "2026-10-13",
   },
 ];

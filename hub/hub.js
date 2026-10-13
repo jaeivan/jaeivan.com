@@ -1,6 +1,7 @@
 (function () {
   const grid = document.getElementById("apps");
-  const apps = window.HUB_APPS || [];
+  // Newest first; "YYYY-MM-DD" strings sort as dates. Same-day apps keep their apps.js order.
+  const apps = (window.HUB_APPS || []).slice().sort((x, y) => (y.created || "").localeCompare(x.created || ""));
 
   apps.forEach((app) => {
     const href = `${app.slug}/`;
