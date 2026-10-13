@@ -7,8 +7,7 @@
  *
  * Fields:
  *   slug         top-level folder name (also the URL: /<slug>/)
- *   title        tile heading
- *   description  one short line under the title
+ *   title        tile name
  *   emoji        tile artwork (or set `thumbnail` to an image path relative to the app folder)
  *   color        tile background
  */
@@ -16,8 +15,13 @@ window.HUB_APPS = [
   {
     slug: "marker-picker",
     title: "Marker Picker",
-    description: "Can't decide which markers to use? Let fate pick four.",
-    emoji: "🎨",
+    thumbnail: "tile.gif",
     color: "#FDE7D9",
+  },
+  {
+    slug: "pokopia-doku",
+    title: "Pokopia Doku",
+    thumbnail: "tile.gif",
+    color: "#EBE1F6",
   },
 ];

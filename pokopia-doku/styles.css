@@ -1,0 +1,729 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #f7f4fa;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e6dfee;
+    --accent: #3f8f4f; /* green = correct answers only */
+    --accent-soft: #dcefd9;
+    --primary: #8b62c9; /* Ditto purple: hover, focus, active UI */
+    --primary-soft: #efe7f8;
+    --wrong: #e5484d;
+    --theme: #8a4fd1;
+    --theme-soft: #f1e8fc;
+    --btn-bg: #111827;
+    --btn-text: #ffffff;
+    --title-shadow: #d9c6ee;
+    --revealed-bg: #f3f4f6;
+    --clue-bg: #fff8e1;
+    --chip-bg: #ebe6f1;
+    --chip-text: #3f3a4a;
+    --overlay: rgba(17, 24, 39, .45);
+    --shadow: rgba(0, 0, 0, .08);
+    --silhouette: brightness(0);
+    --pill-easy-bg: #dcefd9;
+    --pill-easy: #2f6b3b;
+    --pill-medium-bg: #fdf0c8;
+    --pill-medium: #7a5b00;
+    --pill-hard-bg: #fbdcdc;
+    --pill-hard: #9b2226;
+}
+
+/* Dark mode: shared/theme.js sets data-theme="dark" (chosen, or Auto on a dark device) */
+:root[data-theme="dark"] {
+    --bg: #141218;
+    --card: #1d1a22;
+    --text: #ece8f1;
+    --muted: #a39cae;
+    --border: #312c3a;
+    --accent: #57b46a;
+    --accent-soft: #1f3524;
+    --primary: #b48fe6;
+    --primary-soft: #2e2540;
+    --wrong: #f06a6e;
+    --theme: #a97ff0;
+    --theme-soft: #2c2240;
+    --btn-bg: #ece8f1;
+    --btn-text: #141218;
+    --title-shadow: #4b3a68;
+    --revealed-bg: #26232d;
+    --clue-bg: #3a3320;
+    --chip-bg: #2d2935;
+    --chip-text: #dcd6e6;
+    --overlay: rgba(0, 0, 0, .6);
+    --shadow: rgba(0, 0, 0, .4);
+    --silhouette: brightness(0) invert(.85);
+    --pill-easy-bg: #1f3524;
+    --pill-easy: #8fd19c;
+    --pill-medium-bg: #3a3218;
+    --pill-medium: #f0cf6b;
+    --pill-hard-bg: #3d1f21;
+    --pill-hard: #f39a9c;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+    max-width: 560px;
+    margin: auto;
+    padding: 64px 16px 40px;
+}
+
+/* PokeDoku-style title: retro pixel font with a soft offset shadow */
+.title {
+    text-align: center;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .45em;
+    margin: 0;
+    white-space: nowrap;
+    font-family: "Press Start 2P", ui-monospace, monospace;
+    /* Scales down on narrow screens so the title and Ditto stay on one line */
+    font-size: clamp(1rem, 5.4vw, 1.7rem);
+    font-weight: 400;
+    letter-spacing: .02em;
+    line-height: 1.3;
+    color: var(--text);
+    text-shadow: 3px 3px 0 var(--title-shadow);
+}
+
+/* ditto.gif is a 28×20 canvas with room to sway and hop around the 20×13 Ditto,
+   so it's drawn larger and nudged so Ditto itself matches the letters. */
+.title-ditto {
+    height: 1.77em;
+    width: auto;
+    margin: 0 -0.35em 0 -0.4em;
+    position: relative;
+    top: -0.3em;
+    image-rendering: pixelated;
+    filter: drop-shadow(3px 3px 0 var(--title-shadow));
+}
+
+button {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    font: inherit;
+    font-size: .9rem;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(.98);
+}
+
+button.secondary {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+button:disabled {
+    opacity: .45;
+    cursor: default;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 20px 0 12px;
+}
+
+.tabs {
+    display: flex;
+    padding: 3px;
+    border-radius: 12px;
+    background: var(--border);
+}
+
+.tab {
+    background: transparent;
+    color: var(--muted);
+    height: 34px;
+}
+
+.tab.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 1px 2px var(--shadow);
+}
+
+.mode-bar {
+    justify-content: center;
+}
+
+.toolbar + .toolbar {
+    margin-top: 0;
+}
+
+.theme-options {
+    margin: -4px 0 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-size: .88rem;
+}
+
+.theme-options-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+}
+
+.theme-options-head .check {
+    color: var(--text);
+}
+
+.check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--theme);
+}
+
+.theme-note {
+    margin-left: auto;
+    font-size: .75rem;
+}
+
+.toolbar[hidden],
+.theme-options[hidden] {
+    display: none;
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: .9rem;
+}
+
+.hints-status {
+    font-size: .8rem;
+    text-align: right;
+}
+
+/* PokeDoku-style PP readout under the board */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    margin-top: 16px;
+    font-family: "Press Start 2P", ui-monospace, monospace;
+    font-size: .8rem;
+    color: var(--text);
+}
+
+.stat-label {
+    margin-right: 10px;
+    color: var(--muted);
+}
+
+.stat,
+#ppValue {
+    display: inline-flex;
+    align-items: center;
+}
+
+.infinity {
+    font-family: system-ui, sans-serif;
+    font-size: 1.5em;
+    font-weight: 700;
+    line-height: 1;
+    /* The ∞ glyph's ink sits low in its box; lift it to line up with the pixel-font letters. */
+    position: relative;
+    top: -0.18em;
+}
+
+/* In-game PP colors */
+.pp-half {
+    color: #c99a00;
+}
+
+.pp-low {
+    color: #e8742a;
+}
+
+.pp-out {
+    color: var(--wrong);
+}
+
+.pill {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 600;
+}
+
+.pill.easy {
+    background: var(--pill-easy-bg);
+    color: var(--pill-easy);
+}
+
+.pill.medium {
+    background: var(--pill-medium-bg);
+    color: var(--pill-medium);
+}
+
+.pill.hard {
+    background: var(--pill-hard-bg);
+    color: var(--pill-hard);
+}
+
+/* 4x4: corner + 3 column headers, then 3 rows of header + 3 cells */
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: auto;
+    min-height: 64px;
+    padding: 6px 4px;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text);
+    text-align: center;
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+}
+
+.header:hover {
+    background: var(--border);
+}
+
+.header.theme small {
+    color: var(--theme);
+}
+
+/* PokeDoku-style category badges */
+.badge {
+    display: inline-block;
+    max-width: 100%;
+    padding: 4px 9px;
+    border-radius: 10px;
+    background: var(--chip-bg);
+    color: var(--chip-text);
+    font-family: "Silkscreen", ui-monospace, monospace;
+    font-size: .82rem;
+    font-weight: 400;
+    line-height: 1.15;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    /* Whole words only; fitBadges() in script.js shrinks badges whose longest word doesn't fit. */
+    overflow-wrap: normal;
+    word-break: keep-all;
+}
+
+.badge.colored {
+    background: var(--c);
+    color: #2b2b2b;
+}
+
+/* Favorite things: light tint of the color with a colored outline */
+.badge.tint {
+    /* Each first line is the fallback for browsers without color-mix (Safari < 16.2). */
+    background: var(--card);
+    background: color-mix(in srgb, var(--c) 18%, var(--card));
+    border: 1.5px solid var(--c);
+    color: var(--text);
+    color: color-mix(in srgb, var(--c) 55%, var(--text));
+}
+
+/* In-game type badge: type color, light rim, white outlined letters */
+.badge.type {
+    padding: 3px 11px;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, .6);
+    box-shadow: 0 0 0 1.5px var(--c), 0 1px 3px rgba(0, 0, 0, .25);
+    color: white;
+    text-shadow:
+        -1px -1px 0 rgba(0, 0, 0, .55), 1px -1px 0 rgba(0, 0, 0, .55),
+        -1px 1px 0 rgba(0, 0, 0, .55), 1px 1px 0 rgba(0, 0, 0, .55);
+}
+
+.badge.theme {
+    background: var(--theme);
+    color: white;
+    box-shadow: 0 0 0 2px var(--theme-soft);
+}
+
+.header small {
+    font-size: .62rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--muted);
+}
+
+.cell {
+    position: relative;
+    aspect-ratio: 1;
+    height: auto;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cell:not(:disabled):hover {
+    border-color: var(--primary);
+}
+
+.cell:disabled {
+    opacity: 1;
+}
+
+.cell img {
+    width: 72%;
+    height: auto;
+    image-rendering: pixelated;
+}
+
+.cell .name {
+    font-size: .7rem;
+    font-weight: 600;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cell img.silhouette {
+    width: 62%;
+    filter: var(--silhouette);
+    opacity: .75;
+}
+
+.cell .count {
+    font-size: .72rem;
+    color: var(--muted);
+}
+
+.cell .bulb,
+.cell .star {
+    position: absolute;
+    top: 4px;
+    right: 5px;
+    font-size: .75rem;
+}
+
+.cell.correct {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.cell.revealed {
+    background: var(--revealed-bg);
+}
+
+.cell.revealed img {
+    opacity: .55;
+    filter: grayscale(.6);
+}
+
+.cell.shake {
+    animation: shake .35s;
+    border-color: var(--wrong);
+}
+
+@keyframes shake {
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.summary {
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Picker & explainer */
+.overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 8vh 16px 16px;
+    background: var(--overlay);
+    z-index: 20;
+}
+
+.overlay[hidden],
+.toast[hidden] {
+    display: none;
+}
+
+.panel {
+    width: 100%;
+    max-width: 420px;
+    padding: 14px;
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+}
+
+.panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.panel-title {
+    margin: 0 0 10px;
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+button.small {
+    height: 32px;
+    padding: 0 10px;
+    font-size: .8rem;
+}
+
+.hint-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.hint-row button[hidden] {
+    display: none;
+}
+
+.hint-cost {
+    font-size: .75rem;
+    color: var(--muted);
+}
+
+.hint-clues {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    font-size: .85rem;
+}
+
+.hint-clues li {
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    background: var(--clue-bg);
+}
+
+.hint-clues li.note {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+}
+
+.hint-clues li.silhouette {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hint-clues li.silhouette img {
+    width: 56px;
+    height: 56px;
+    filter: var(--silhouette);
+    image-rendering: pixelated;
+}
+
+.browse-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.browse-tabs[hidden] {
+    display: none;
+}
+
+.chip {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: .78rem;
+}
+
+.chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.explain-tag {
+    margin: 0 0 2px;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--muted);
+}
+
+.explain-text {
+    margin: 0 0 8px;
+    line-height: 1.4;
+}
+
+.explain-count {
+    margin: 0;
+    font-size: .85rem;
+    color: var(--muted);
+}
+
+.icon-btn {
+    height: 28px;
+    width: 28px;
+    padding: 0;
+    background: transparent;
+    color: var(--muted);
+}
+
+#pickerInput {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font: inherit;
+    font-size: 1rem;
+}
+
+#pickerInput:focus {
+    outline: 2px solid var(--primary);
+    border-color: transparent;
+}
+
+.picker-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.picker-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.picker-list li img {
+    width: 40px;
+    height: 40px;
+    image-rendering: pixelated;
+}
+
+.picker-list li.active,
+.picker-list li:hover {
+    background: var(--primary-soft);
+}
+
+.picker-list li.used {
+    opacity: .4;
+    cursor: default;
+    background: none;
+}
+
+.picker-list li.empty {
+    color: var(--muted);
+    cursor: default;
+    background: none;
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    font-size: .9rem;
+    z-index: 30;
+}
+
+@media (max-width: 420px) {
+    .header {
+        font-size: .7rem;
+        min-height: 56px;
+    }
+
+    .badge {
+        padding: 3px 4px;
+        font-size: .62rem;
+        letter-spacing: 0;
+    }
+
+    .header {
+        padding: 6px 2px;
+    }
+
+    .board {
+        gap: 4px;
+    }
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Pokopia Doku</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen&display=swap">
+        <link rel="stylesheet" href="../shared/theme.css">
+        <link rel="stylesheet" href="../shared/hub-nav.css">
+        <link rel="stylesheet" href="styles.css">
+        <script src="../shared/theme.js"></script>
+    </head>
+    <body>
+        <a class="hub-nav" href="../">← All apps</a>
+        <div class="app">
+            <header class="title">
+                <h1><span>Pokopia Doku</span><img class="title-ditto" src="ditto.gif" alt=""></h1>
+            </header>
+
+            <div class="toolbar mode-bar">
+                <div class="tabs" role="tablist">
+                    <button id="dailyTab" class="tab" role="tab">Daily</button>
+                    <button id="unlimitedTab" class="tab" role="tab">Unlimited</button>
+                </div>
+            </div>
+            <div id="unlimitedControls" class="toolbar" hidden>
+                <div id="difficultyTabs" class="tabs" role="tablist" aria-label="Difficulty">
+                    <button class="tab" role="tab" data-difficulty="easy">Easy</button>
+                    <button class="tab" role="tab" data-difficulty="medium">Medium</button>
+                    <button class="tab" role="tab" data-difficulty="hard">Hard</button>
+                </div>
+                <button id="newGridBtn" class="secondary">New grid</button>
+            </div>
+            <div id="themeOptions" class="theme-options" hidden>
+                <div class="theme-options-head">
+                    <label class="check">
+                        <input type="checkbox" id="themesToggle">
+                        Include themes
+                    </label>
+                    <span class="theme-note">Applies to the next grid</span>
+                </div>
+            </div>
+
+            <div class="status">
+                <span><span id="puzzleLabel"></span> <span id="difficultyPill" class="pill"></span></span>
+                <span id="hintsLabel" class="hints-status"></span>
+            </div>
+
+            <div id="board" class="board"></div>
+
+            <!-- PokeDoku-style PP readout: guesses left, like a move's PP -->
+            <div class="stats" aria-live="polite">
+                <span class="stat"><span class="stat-label">PP</span> <span id="ppValue"></span></span>            </div>
+
+            <div class="actions">
+                <button id="giveUpBtn" class="secondary">Give up</button>
+                <button id="shareBtn" class="secondary" hidden>Copy result</button>
+            </div>
+            <p id="summary" class="summary" hidden></p>
+        </div>
+
+        <div id="picker" class="overlay" hidden>
+            <div class="panel" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+                <div class="panel-head">
+                    <p id="pickerTitle" class="panel-title"></p>
+                    <button id="pickerClose" class="icon-btn" aria-label="Close">✕</button>
+                </div>
+                <div class="hint-row">
+                    <button id="hintBtn" class="secondary small"></button>
+                    <button id="browseBtn" class="secondary small">🔍 Browse options</button>
+                    <span id="hintCost" class="hint-cost"></span>
+                </div>
+                <ul id="hintClues" class="hint-clues"></ul>
+                <div id="browseTabs" class="browse-tabs" hidden>
+                    <button id="browseRow" class="chip"></button>
+                    <button id="browseCol" class="chip"></button>
+                </div>
+                <input id="pickerInput" type="text" autocomplete="off" spellcheck="false" placeholder="Search Pokémon…">
+                <ul id="pickerList" class="picker-list"></ul>
+            </div>
+        </div>
+
+        <div id="explain" class="overlay" hidden>
+            <div class="panel" role="dialog" aria-modal="true" aria-labelledby="explainTitle">
+                <div class="panel-head">
+                    <div>
+                        <p id="explainTag" class="explain-tag"></p>
+                        <p id="explainTitle" class="panel-title"></p>
+                    </div>
+                    <button id="explainClose" class="icon-btn" aria-label="Close">✕</button>
+                </div>
+                <p id="explainText" class="explain-text"></p>
+                <p id="explainCount" class="explain-count"></p>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" hidden></div>
+
+        <script src="data.js"></script>
+        <script src="themes.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>

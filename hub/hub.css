@@ -8,6 +8,17 @@
     --text: #1f2937;
     --muted: #6b7280;
     --border: #ece9e2;
+    --tile-mix: 100%; /* how much of each tile's pastel color shows */
+}
+
+/* Dark mode: shared/theme.js sets data-theme="dark" (chosen, or Auto on a dark device) */
+:root[data-theme="dark"] {
+    --bg: #15161a;
+    --card: #1e2026;
+    --text: #e7e9ee;
+    --muted: #9aa0ab;
+    --border: #2c2f37;
+    --tile-mix: 30%;
 }
 
 body {
@@ -39,7 +50,6 @@ body {
     margin: 8px 0 0;
     color: var(--muted);
 }
-
 #apps {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 260px));
@@ -70,6 +80,10 @@ body {
     place-items: center;
     aspect-ratio: 4 / 3;
     border-radius: 12px;
+    /* --tile-color comes from the app's `color` in apps.js; dark mode mutes it.
+       The first line is the fallback for browsers without color-mix (Safari < 16.2). */
+    background: var(--tile-color, #eef2ff);
+    background: color-mix(in srgb, var(--tile-color, #eef2ff) var(--tile-mix), var(--card));
     font-size: 4rem;
     overflow: hidden;
 }
@@ -81,15 +95,9 @@ body {
 }
 
 .tile h2 {
-    margin: 14px 4px 4px;
+    margin: 12px 4px 2px;
     font-size: 1.05rem;
-}
-
-.tile p {
-    margin: 0 4px;
-    color: var(--muted);
-    font-size: .88rem;
-    line-height: 1.4;
+    text-align: center;
 }
 
 .hub-footer {

@@ -1,0 +1,56 @@
+/*
+ * Companion to shared/theme.js: native controls (scrollbars, selects, checkboxes) follow
+ * the active theme, and the minimal Auto/Light/Dark toggle. Namespaced under .site-theme-toggle.
+ */
+:root {
+    color-scheme: light dark;
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+.site-theme-toggle {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: #4b5563;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+}
+
+.site-theme-toggle:hover {
+    background: rgba(0, 0, 0, .06);
+    color: #111827;
+}
+
+.site-theme-toggle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.site-theme-toggle svg {
+    display: block;
+}
+
+:root[data-theme="dark"] .site-theme-toggle {
+    color: #aeb4bf;
+}
+
+:root[data-theme="dark"] .site-theme-toggle:hover {
+    background: rgba(255, 255, 255, .08);
+    color: #f3f4f6;
+}
