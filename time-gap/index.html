@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Time Gap</title>
+        <!-- Site-wide light/dark mode + Auto/Light/Dark toggle. Keep these so the app matches the rest of the site. -->
+        <link rel="stylesheet" href="../shared/theme.css">
+        <script src="../shared/theme.js"></script>
+        <link rel="stylesheet" href="../shared/hub-nav.css">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <a class="hub-nav" href="../">← All apps</a>
+        <main>
+            <header>
+                <h1>⏳ Time Gap</h1>
+                <p class="tagline">Which pair happened <strong>closer together</strong> in time?</p>
+            </header>
+
+            <div class="scores">
+                <span>Streak <b id="streak">0</b></span>
+                <span>Best <b id="best">0</b></span>
+            </div>
+
+            <p class="special-note" id="note" hidden></p>
+
+            <div class="pairs" id="pairs">
+                <button type="button" class="pair" data-i="0"></button>
+                <div class="vs" aria-hidden="true">or</div>
+                <button type="button" class="pair" data-i="1"></button>
+            </div>
+
+            <p class="result" id="result" aria-live="polite"></p>
+            <button type="button" class="next" id="next" hidden>Next</button>
+
+            <section class="picker" aria-labelledby="cats-heading">
+                <p class="cats-heading" id="cats-heading">Categories</p>
+                <div class="cats" id="cats" role="group" aria-labelledby="cats-heading">
+                    <button type="button" class="cat" data-cat="random" aria-pressed="true">🎲 Random</button>
+                </div>
+                <p class="cats-heading" id="special-heading">Special categories</p>
+                <div class="cats" id="special" role="group" aria-labelledby="special-heading"></div>
+            </section>
+        </main>
+        <script src="data.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
