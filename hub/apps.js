@@ -12,6 +12,7 @@
  *   thumbnailStill  optional still image shown until the tile is hovered, when `thumbnail`
  *                (e.g. an animated GIF) takes over
  *   color        tile background
+ *   added        optional "YYYY-MM-DD" the app went live; the tile shows a "New" badge for 30 days
  */
 window.HUB_APPS = [
   {
@@ -27,5 +28,6 @@ window.HUB_APPS = [
     thumbnail: "tile.gif",
     thumbnailStill: "tile-still.gif",
     color: "#EBE1F6",
+    added: "2026-10-12",
   },
 ];
