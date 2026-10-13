@@ -437,6 +437,17 @@ window.TIME_GAP_EVENTS = [
   { year: 784, label: "Goku meets Uub and leaves to train him", cat: "dragonball", emoji: "👋" },
   { year: 789, label: "The Black Star Dragon Balls turn Goku back into a kid (GT)", cat: "dragonball", emoji: "⭐" },
   { year: 889, label: "Goku Jr. fights Vegeta Jr. at the World Tournament (GT)", cat: "dragonball", emoji: "👦", approx: true, fuzz: 5 },
+  // Dragon Ball Super
+  { year: 778, label: "Whis starts training Goku and Vegeta on Beerus's planet", cat: "dragonball", emoji: "🪄" },
+  { year: 779, label: "Frieza's army wishes him back to life (Resurrection 'F')", cat: "dragonball", emoji: "👿" },
+  { year: 779, label: "Universe 6 takes on Universe 7 in Champa's tournament", cat: "dragonball", emoji: "6️⃣" },
+  { year: 779, label: "Goku Black attacks Future Trunks's timeline", cat: "dragonball", emoji: "🌹", approx: true, fuzz: 1 },
+  { year: 779, label: "Goku meets Zeno, the King of Everything", cat: "dragonball", emoji: "♾️", approx: true, fuzz: 1 },
+  { year: 780, label: "Bulla is born", cat: "dragonball", emoji: "👧" },
+  { year: 780, label: "Android 17 wins the Tournament of Power", cat: "dragonball", emoji: "🏆" },
+  { year: 781, label: "Moro breaks out of the Galactic Patrol prison", cat: "dragonball", emoji: "🐐", approx: true, fuzz: 2 },
+  { year: 781, label: "Granolah wishes to become the strongest in the universe", cat: "dragonball", emoji: "🎯", approx: true, fuzz: 2 },
+  { year: 781, label: "The Red Ribbon Army returns with Gamma 1 and Gamma 2 (Super Hero)", cat: "dragonball", emoji: "🤖", approx: true, fuzz: 2 },
   // Dragon Ball transformations
   { year: 749, label: "Goku turns into a Great Ape at Pilaf's castle", cat: "dragonball", emoji: "🦍" },
   { year: 762, label: "Goku first uses the Kaioken, against Vegeta", cat: "dragonball", emoji: "🔴" },
