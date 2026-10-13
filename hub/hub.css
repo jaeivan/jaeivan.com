@@ -47,8 +47,20 @@ body {
     line-height: 0;
 }
 
-/* Spinning WordArt logo, drawn by _tools/logo.mjs */
+/* WordArt logo, drawn by _tools/logo.mjs. Waves and spins on hover, toggles on click/tap (hub.js). */
+.hub-logo-wrap {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.hub-logo-wrap:focus-visible {
+    outline: 2px solid var(--muted);
+    outline-offset: 4px;
+}
+
 .hub-logo {
+    display: block;
     max-width: 100%;
     height: auto;
     image-rendering: pixelated;

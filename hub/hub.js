@@ -67,6 +67,55 @@
   const year = document.querySelector(".hub-footer-year");
   if (year) year.textContent = new Date().getFullYear();
 
+  // Header logo (works like Pokopia Doku's title Ditto): waves and spins while hovered with a
+  // mouse; a tap, click, Enter or Space toggles it on so it keeps going, and another stops it
+  // (even mid-hover). Swapping the image restarts the GIF, so it's only swapped when the
+  // animation really starts or stops, and a stop waits for the current loop to end: the loop
+  // ends on the same pose as logo-still.gif, so there's no jump.
+  const LOGO_LOOP_MS = 2600; // printed by `node _tools/logo.mjs`
+  const logo = document.getElementById("hub-logo");
+  const logoImg = logo.querySelector("img");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let logoHover = false, logoToggled = false, logoPlaying = false, logoStart = 0, logoStopTimer;
+
+  function updateLogo() {
+    clearTimeout(logoStopTimer);
+    if ((logoHover || logoToggled) && !reduceMotion.matches) {
+      if (logoPlaying) return; // already playing (maybe winding down): keep going
+      logoPlaying = true;
+      logoStart = performance.now();
+      logoImg.src = "hub/logo.gif";
+    } else if (logoPlaying) {
+      const untilLoopEnd = LOGO_LOOP_MS - ((performance.now() - logoStart) % LOGO_LOOP_MS);
+      logoStopTimer = setTimeout(() => {
+        logoPlaying = false;
+        logoImg.src = "hub/logo-still.gif";
+      }, untilLoopEnd);
+    }
+  }
+  function toggleLogo() {
+    logoToggled = !logoToggled;
+    if (!logoToggled) logoHover = false; // stop even mid-hover; hover resumes on the next mouse-over
+    logo.setAttribute("aria-pressed", logoToggled);
+    updateLogo();
+  }
+
+  logo.addEventListener("pointerenter", (e) => {
+    if (e.pointerType === "mouse") (logoHover = true), updateLogo();
+  });
+  logo.addEventListener("pointerleave", (e) => {
+    if (e.pointerType === "mouse") (logoHover = false), updateLogo();
+  });
+  logo.addEventListener("pointerup", (e) => {
+    if (e.button === 0) toggleLogo(); // primary button / touch only
+  });
+  logo.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    toggleLogo();
+  });
+  new Image().src = "hub/logo.gif"; // preload so the first hover starts right away
+
   // `added` is "YYYY-MM-DD"; apps count as new for 30 days.
   function isNew(added) {
     const age = Date.now() - Date.parse(added + "T00:00:00");

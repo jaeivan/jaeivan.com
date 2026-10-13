@@ -2,7 +2,7 @@
 //
 //   node _tools/logo.mjs
 //
-// Writes hub/logo.gif (hub header, spinning), hub/logo-still.gif (reduced motion),
+// Writes hub/logo.gif (hub header: a Game Boy-style wave, then a spin), hub/logo-still.gif (at rest),
 // favicon.gif (a spinning "J") and og.png (link-preview card, 1200×630).
 // The GIF/PNG encoders are shared: _tools/pixel-gif.mjs.
 
@@ -43,14 +43,14 @@ function bitmap(text) {
 }
 
 // Render one frame of `font` extruded `depth` art pixels deep, spun `angle` radians around its
-// vertical axis. Each font pixel is `cell` art pixels. A z-buffer per art pixel picks whatever
+// vertical axis, with each letter raised `lift[letter]` art pixels (for the wave). Each font pixel is `cell` art pixels. A z-buffer per art pixel picks whatever
 // is nearest the viewer: the gradient front/back faces or the shaded sides.
-function spinFrame(font, { cell, depth, width, height, angle }) {
+function spinFrame(font, { cell, depth, width, height, angle, top, lift = [] }) {
     const grid = Array.from({ length: height }, () => Array(width).fill("."));
     const zbuf = Array.from({ length: height }, () => Array(width).fill(-Infinity));
     const cos = Math.cos(angle), sin = Math.sin(angle);
     const fw = font[0].length * cell, fh = font.length * cell;
-    const oy = Math.floor((height - fh) / 2);
+    const oy = top ?? Math.floor((height - fh) / 2);
     const half = depth / 2, step = 0.25;
     const side = sin > 0 ? "S" : "s";
 
@@ -66,7 +66,7 @@ function spinFrame(font, { cell, depth, width, height, angle }) {
                     if (col < 0 || col >= width) continue;
                     const ch = Math.abs(z) === half ? face : side;
                     for (let v = 0; v < cell; v++) {
-                        const r = oy + fy * cell + v;
+                        const r = oy + fy * cell + v - (lift[Math.floor(fx / 6)] ?? 0);
                         if (near > zbuf[r][col]) {
                             zbuf[r][col] = near;
                             grid[r][col] = ch;
@@ -95,12 +95,37 @@ function spin(font, opts, { frames = 24, hold = 1600, ms = 50 } = {}) {
     }));
 }
 
+// Like the Game Boy Color boot screen: the letters hop up one after another, left to right.
+function wave(font, opts, { letters, hop = 7, stagger = 2, length = 8, ms = 45 } = {}) {
+    const frames = (letters - 1) * stagger + length + 1;
+    return Array.from({ length: frames }, (_, f) => ({
+        grid: spinFrame(font, {
+            ...opts,
+            angle: 0,
+            lift: Array.from({ length: letters }, (_, i) => {
+                const t = (f - i * stagger) / length;
+                return t > 0 && t < 1 ? Math.round(hop * Math.sin(Math.PI * t)) : 0;
+            }),
+        }),
+        ms,
+    }));
+}
+
 const word = bitmap("jaeivan");
-const LOGO = { cell: 3, depth: 6, width: 128, height: 34 };
-const logoFrames = spin(word, LOGO);
+// Extra headroom on top so the letters can hop; the still frame keeps it too, so swapping doesn't jump.
+const LOGO = { cell: 3, depth: 6, width: 128, height: 40, top: 9 };
+const rest = spinFrame(word, { ...LOGO, angle: 0 });
+// One loop: wave, full spin, then a beat face-on. It starts and ends on the still pose, so the hub
+// can stop it at a loop boundary without a jump (see hub/hub.js).
+const logoFrames = [
+    ...wave(word, LOGO, { letters: 7 }),
+    ...spin(word, LOGO, { hold: 0 }).slice(1),
+    { grid: rest, ms: 400 },
+];
 const canvas = { width: LOGO.width, height: LOGO.height, dx: 0, dy: 0 };
 console.log("hub/logo.gif", writePixelGif(path.join(ROOT, "hub/logo.gif"), { frames: logoFrames, colors: COLORS, canvas, scale: 2 }));
-console.log("hub/logo-still.gif", writePixelGif(path.join(ROOT, "hub/logo-still.gif"), { frames: [logoFrames[0]], colors: COLORS, canvas, scale: 2 }));
+console.log("  loop ms:", logoFrames.reduce((t, f) => t + Math.round(f.ms / 10) * 10, 0));
+console.log("hub/logo-still.gif", writePixelGif(path.join(ROOT, "hub/logo-still.gif"), { frames: [{ grid: rest, ms: 0 }], colors: COLORS, canvas, scale: 2 }));
 
 const ICON = { cell: 2, depth: 3, width: 16, height: 16 };
 console.log("favicon.gif", writePixelGif(path.join(ROOT, "favicon.gif"), {

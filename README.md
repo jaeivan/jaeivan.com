@@ -40,7 +40,7 @@ It goes live at `jaeivan.com/<slug>/`.
 
 ## Logo, favicon and link previews
 
-`node _tools/logo.mjs` redraws the spinning hub logo (`hub/logo.gif`, `hub/logo-still.gif`), `favicon.gif` and the link-preview card `og.png`. The `og:` tags in `index.html` use full `https://jaeivan.com/...` URLs because link-preview crawlers need them.
+`node _tools/logo.mjs` redraws the hub logo (`hub/logo.gif` waves and spins on hover or click, `hub/logo-still.gif` at rest; keep `LOGO_LOOP_MS` in `hub/hub.js` in sync with the loop length it prints), `favicon.gif` and the link-preview card `og.png`. The `og:` tags in `index.html` use full `https://jaeivan.com/...` URLs because link-preview crawlers need them.
 
 ## Running locally
 
