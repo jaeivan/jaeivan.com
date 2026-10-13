@@ -54,7 +54,7 @@ Editing `pool` or any theme can change the grids of past and future days.
 All in `pokopia-doku/script.js`:
 
 - `DIFFICULTIES`: per difficulty, the category-rating mix, answers per square,
-  guesses (`null` = unlimited) and hint rules.
+  guesses (`null` = unlimited), hint rules and how browsing works (`browse`).
 - `WEEKDAY_DIFFICULTY`: which difficulty each weekday's Daily uses.
 - `GROUP_RATINGS` / `RATING_OVERRIDES`: how hard each category is (1 easy to 3 hard).
   Categories with fewer than 12 Pokémon get +1 automatically.
