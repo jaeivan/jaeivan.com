@@ -16,7 +16,7 @@
  *   color        tile background
  *   created      "YYYY-MM-DD" the app went live; the tile shows a "New" badge for 7 days
  *   updated      "YYYY-MM-DD" the app last changed; the tile shows an "Updated" badge for 7 days
- *                (unless it's still "New"). Both dates are shown under the tile name.
+ *                (alongside "New" if both apply). Both dates are shown under the tile name.
  */
 window.HUB_APPS = [
   {
@@ -25,7 +25,7 @@ window.HUB_APPS = [
     thumbnail: "tile.gif",
     thumbnailStill: "tile-still.gif",
     color: "#FDE7D9",
-    created: "2026-10-12",
+    created: "2026-08-13",
     updated: "2026-10-12",
   },
   {

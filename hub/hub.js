@@ -21,12 +21,19 @@
     } else {
       art.textContent = app.emoji || "✨";
     }
-    const badge = withinWeek(app.created) ? "New" : withinWeek(app.updated) ? "Updated" : "";
-    if (badge) {
-      const el = document.createElement("span");
-      el.className = `tile-badge tile-badge-${badge.toLowerCase()}`;
-      el.textContent = badge;
-      art.append(el);
+    const badges = [];
+    if (withinWeek(app.created)) badges.push("New");
+    if (withinWeek(app.updated)) badges.push("Updated");
+    if (badges.length) {
+      const wrap = document.createElement("span");
+      wrap.className = "tile-badges";
+      badges.forEach((label) => {
+        const el = document.createElement("span");
+        el.className = `tile-badge tile-badge-${label.toLowerCase()}`;
+        el.textContent = label;
+        wrap.append(el);
+      });
+      art.append(wrap);
     }
 
     const title = document.createElement("h2");

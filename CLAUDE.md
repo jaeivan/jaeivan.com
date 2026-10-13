@@ -12,7 +12,7 @@ GitHub Pages publishes `main` to jaeivan.com, so anything merged into `main` goe
 
 1. Copy `_template/` to `<slug>/` (lowercase, hyphenated).
 2. Add an entry to `hub/apps.js` with `slug`, `title`, `description`, `emoji` (or `thumbnail`), `color`, and `created`/`updated` dates (`YYYY-MM-DD`).
-   Whenever you change an existing app, bump its `updated` date (the hub shows an "Updated" badge for a week).
+   Whenever you change an existing app, bump its `updated` date (the hub shows an "Updated" badge for a week, next to "New" if the app is also new).
 3. Keep the back link (`<a class="hub-nav" href="../">`) and leave about 64px of top padding so it doesn't cover the app's content.
 
 ## Rules

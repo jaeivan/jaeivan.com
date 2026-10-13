@@ -109,11 +109,16 @@ body {
     position: relative;
 }
 
-/* "New" / "Updated" badge for apps created or changed in the last 7 days (`created` / `updated` in apps.js) */
-.tile-badge {
+/* "New" / "Updated" badges for apps created or changed in the last 7 days (`created` / `updated` in apps.js) */
+.tile-badges {
     position: absolute;
     top: 8px;
     right: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.tile-badge {
     padding: 3px 9px;
     border-radius: 999px;
     background: #ff71ce;
