@@ -37,6 +37,10 @@ It goes live at `jaeivan.com/<slug>/`.
 
 - **Pokopia Doku:** see [`pokopia-doku/_tools/README.md`](pokopia-doku/_tools/README.md) for updating data, themed days and difficulty.
 
+## Logo, favicon and link previews
+
+`node _tools/logo.mjs` redraws the spinning hub logo (`hub/logo.gif`, `hub/logo-still.gif`), `favicon.gif` and the link-preview card `og.png`. The `og:` tags in `index.html` use full `https://jaeivan.com/...` URLs because link-preview crawlers need them.
+
 ## Running locally
 
 The `../` back links need a server:
