@@ -4,12 +4,13 @@
 //
 // Writes pokopia-doku/ditto.gif (title, tight), ditto-still.gif (title at rest, shown until
 // hovered or tapped), tile.gif (hub tile, 4:3 with padding) and tile-still.gif (hub tile at
-// rest, animated on hover).
+// rest, animated on hover), favicon.gif (browser tab, square) and icon.png (180×180 home-screen
+// icon on the tile color).
 // Edit MAP / DANCE below to change the art or the moves. The GIF encoder is shared: _tools/pixel-gif.mjs.
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { outline, writePixelGif } from "../../_tools/pixel-gif.mjs";
+import { outline, place, writePixelGif, writePixelPng } from "../../_tools/pixel-gif.mjs";
 
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -81,6 +82,7 @@ const frames = DANCE.map((f) => ({ grid: frame(f), ms: f.ms }));
 for (const [file, canvas] of [
     ["ditto.gif", { width: CW, height: CH, dx: 0, dy: 0 }],
     ["tile.gif", { width: 40, height: 30, dx: 6, dy: 3 }], // hub tile: 4:3, Ditto centered
+    ["favicon.gif", { width: CW, height: CW, dx: 0, dy: (CW - CH) / 2 }], // browser tab: square
 ]) {
     const info = writePixelGif(path.join(OUT, file), { frames, colors: COLORS, canvas });
     console.log(`wrote ${file} (${info.width}×${info.height}, ${info.frames} frames, ${(info.bytes / 1024).toFixed(1)} KB)`);
@@ -93,3 +95,11 @@ for (const [file, canvas] of [
     const info = writePixelGif(path.join(OUT, file), { frames: frames.slice(0, 1), colors: COLORS, canvas });
     console.log(`wrote ${file} (${info.width}×${info.height}, 1 frame, ${(info.bytes / 1024).toFixed(1)} KB)`);
 }
+// Home-screen icon: the neutral pose on the hub tile color, padded so rounded corners don't clip it.
+const icon = writePixelPng(path.join(OUT, "icon.png"), {
+    grid: place(frames[0].grid, { width: 36, height: 36, dx: 4, dy: 4 }),
+    colors: COLORS,
+    background: "#EBE1F6",
+    scale: 5,
+});
+console.log(`wrote icon.png (${icon.width}×${icon.height}, ${(icon.bytes / 1024).toFixed(1)} KB)`);

@@ -2,13 +2,14 @@
 //
 //   node marker-picker/_tools/marker.mjs
 //
-// Writes marker-picker/marker.gif (app title, tight), marker-picker/tile.gif (hub tile, 4:3)
-// and tile-still.gif (hub tile at rest, animated on hover).
+// Writes marker-picker/marker.gif (app title, tight), marker-picker/tile.gif (hub tile, 4:3),
+// tile-still.gif (hub tile at rest, animated on hover), favicon.gif (browser tab, square) and
+// icon.png (180×180 home-screen icon on the tile color).
 // The GIF encoder is shared: _tools/pixel-gif.mjs.
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { outline, writePixelGif } from "../../_tools/pixel-gif.mjs";
+import { outline, place, writePixelGif, writePixelPng } from "../../_tools/pixel-gif.mjs";
 
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -103,6 +104,7 @@ const frames = IDLE.map((f) => ({ grid: pose(f), ms: f.ms }));
 for (const [file, canvas] of [
     ["marker.gif", { width: SW, height: SH + 1, dx: 0, dy: 0 }], // app title, tight
     ["tile.gif", { width: 40, height: 30, dx: 10, dy: 1 }], // hub tile: 4:3, marker centered
+    ["favicon.gif", { width: SH + 1, height: SH + 1, dx: (SH + 1 - SW) / 2, dy: 0 }], // browser tab: square
 ]) {
     const info = writePixelGif(path.join(OUT, file), { frames, colors: COLORS, canvas });
     console.log(`wrote ${file} (${info.width}×${info.height}, ${info.frames} frames, ${(info.bytes / 1024).toFixed(1)} KB)`);
@@ -114,3 +116,11 @@ const still = writePixelGif(path.join(OUT, "tile-still.gif"), {
     canvas: { width: 40, height: 30, dx: 10, dy: 1 },
 });
 console.log(`wrote tile-still.gif (${still.width}×${still.height}, 1 frame, ${(still.bytes / 1024).toFixed(1)} KB)`);
+// Home-screen icon: the neutral pose on the hub tile color, padded so rounded corners don't clip it.
+const icon = writePixelPng(path.join(OUT, "icon.png"), {
+    grid: place(frames[0].grid, { width: 36, height: 36, dx: 8, dy: 4 }),
+    colors: COLORS,
+    background: "#FDE7D9",
+    scale: 5,
+});
+console.log(`wrote icon.png (${icon.width}×${icon.height}, ${(icon.bytes / 1024).toFixed(1)} KB)`);
