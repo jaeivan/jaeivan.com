@@ -319,6 +319,15 @@ h1 {
 }
 
 @media (max-width: 620px) {
+    .cats {
+        gap: 6px;
+    }
+
+    .cat {
+        padding: 6px 11px;
+        font-size: 0.85rem;
+    }
+
     .pairs {
         grid-template-columns: 1fr;
     }

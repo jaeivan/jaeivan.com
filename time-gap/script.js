@@ -8,7 +8,17 @@
     var bestEl = document.getElementById("best");
     var resultEl = document.getElementById("result");
     var nextBtn = document.getElementById("next");
-    var catButtons = document.querySelectorAll(".cat");
+    var catsEl = document.getElementById("cats");
+    window.TIME_GAP_CATEGORIES.forEach(function (c) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cat";
+        btn.dataset.cat = c.id;
+        btn.setAttribute("aria-pressed", "false");
+        btn.textContent = c.emoji + " " + c.label;
+        catsEl.appendChild(btn);
+    });
+    var catButtons = catsEl.querySelectorAll(".cat");
 
     var streak = 0;
     var best = loadBest();
@@ -205,7 +215,7 @@
         } else {
             cats = cats.concat(cat);
         }
-        // All three picked is the same as Random.
+        // Every category picked is the same as Random.
         if (cats.length === catButtons.length - 1) cats = [];
 
         catButtons.forEach(function (btn) {
