@@ -656,7 +656,7 @@ function hintCostText() {
 
 // ---------- Rendering ----------
 
-// Header badges in the PokeDoku style: types look like in-game type badges,
+// Header badges: types look like in-game type badges,
 // flavors and habitats get their own colors, everything else is a plain chip.
 const TYPE_COLORS = {
     Normal: "#9fa19f", Fire: "#e62829", Water: "#2980ef", Electric: "#fac000", Grass: "#3fa129", Ice: "#3dcef3",
@@ -829,7 +829,9 @@ function render() {
                     btn.append(bulb);
                 }
             }
-            btn.disabled = over || Boolean(state.cells[i]);
+            // After the game, every square opens its list of possible answers.
+            btn.disabled = !over && Boolean(state.cells[i]);
+            if (over) btn.setAttribute("aria-label", `${row.label} and ${col.label}: see all answers`);
             board.append(btn);
         });
     });
@@ -869,6 +871,32 @@ function openExplain(cat) {
 }
 
 const closeExplain = () => ($("explain").hidden = true);
+
+// ---------- Possible answers (after the game) ----------
+
+function openAnswers(index) {
+    const picked = state.cells[index];
+    const answers = state.grid.cellAnswers[index]
+        .map((id) => BY_ID.get(id))
+        .sort((a, b) => (a.id === picked ? -1 : b.id === picked ? 1 : a.name.localeCompare(b.name)));
+    $("answersTitle").textContent = `${rowOf(index).label} × ${colOf(index).label}`;
+    $("answersCount").textContent = `${answers.length} possible ${answers.length === 1 ? "answer" : "answers"}`;
+    const list = $("answersList");
+    list.replaceChildren();
+    answers.forEach((p) => {
+        const li = document.createElement("li");
+        const name = document.createElement("span");
+        name.textContent = p.id === picked ? `${p.name} ✓ your answer` : p.name;
+        li.classList.toggle("picked", p.id === picked);
+        li.append(spriteImg(p), name);
+        list.append(li);
+    });
+    list.scrollTop = 0;
+    $("answers").hidden = false;
+    $("answersClose").focus();
+}
+
+const closeAnswers = () => ($("answers").hidden = true);
 
 // ---------- Picker ----------
 
@@ -1005,7 +1033,9 @@ function shareText() {
 
 $("board").addEventListener("click", (e) => {
     const cell = e.target.closest(".cell");
-    if (cell && !cell.disabled) openPicker(+cell.dataset.index);
+    if (!cell || cell.disabled) return;
+    if (isOver()) openAnswers(+cell.dataset.index);
+    else openPicker(+cell.dataset.index);
 });
 $("pickerInput").addEventListener("input", renderResults);
 $("pickerInput").addEventListener("keydown", (e) => {
@@ -1036,8 +1066,14 @@ $("explainClose").addEventListener("click", closeExplain);
 $("explain").addEventListener("click", (e) => {
     if (e.target === $("explain")) closeExplain();
 });
+$("answersClose").addEventListener("click", closeAnswers);
+$("answers").addEventListener("click", (e) => {
+    if (e.target === $("answers")) closeAnswers();
+});
 document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !$("explain").hidden) closeExplain();
+    if (e.key !== "Escape") return;
+    if (!$("explain").hidden) closeExplain();
+    if (!$("answers").hidden) closeAnswers();
 });
 $("dailyTab").addEventListener("click", startDaily);
 $("unlimitedTab").addEventListener("click", () => state.mode !== "unlimited" && startUnlimited());
@@ -1057,14 +1093,66 @@ $("giveUpBtn").addEventListener("click", () => {
     saveDaily();
     render();
 });
+// Phones get the system share sheet; desktops (and phones where sharing fails) copy instead.
+const USE_SHARE_SHEET = !!navigator.share && matchMedia("(pointer: coarse)").matches;
+if (USE_SHARE_SHEET) $("shareBtn").textContent = "Share result";
+
 $("shareBtn").addEventListener("click", async () => {
+    const text = shareText();
+    if (USE_SHARE_SHEET) {
+        try {
+            await navigator.share({ text });
+            return;
+        } catch (err) {
+            if (err.name === "AbortError") return; // closed the share sheet
+        }
+    }
     try {
-        await navigator.clipboard.writeText(shareText());
+        await navigator.clipboard.writeText(text);
         toast("Copied to clipboard");
     } catch {
         toast("Couldn't copy");
     }
 });
+
+// Title Ditto (decorative): dances while hovered with a mouse; a tap or click toggles it on
+// so it keeps dancing, and another tap or click stops it (even mid-hover).
+// Swapping the image restarts the GIF, so it's only swapped when dancing really starts or
+// stops, and a stop waits for the current loop to end: the loop ends on the same neutral
+// pose as ditto-still.gif, so there's no jump, and hovering back in before then just
+// carries on dancing.
+const DITTO_LOOP_MS = 16 * 90; // DANCE in _tools/ditto.mjs: 16 frames × 90ms
+const ditto = $("ditto");
+const dittoImg = ditto.querySelector("img");
+let dittoHover = false, dittoToggled = false, dittoDancing = false, dittoStart = 0, dittoStopTimer;
+function updateDitto() {
+    clearTimeout(dittoStopTimer);
+    if (dittoHover || dittoToggled) {
+        if (dittoDancing) return; // already dancing (maybe winding down): keep going
+        dittoDancing = true;
+        dittoStart = performance.now();
+        dittoImg.src = "ditto.gif";
+    } else if (dittoDancing) {
+        const untilLoopEnd = DITTO_LOOP_MS - ((performance.now() - dittoStart) % DITTO_LOOP_MS);
+        dittoStopTimer = setTimeout(() => {
+            dittoDancing = false;
+            dittoImg.src = "ditto-still.gif";
+        }, untilLoopEnd);
+    }
+}
+ditto.addEventListener("pointerenter", (e) => {
+    if (e.pointerType === "mouse") (dittoHover = true), updateDitto();
+});
+ditto.addEventListener("pointerleave", (e) => {
+    if (e.pointerType === "mouse") (dittoHover = false), updateDitto();
+});
+ditto.addEventListener("pointerup", (e) => {
+    if (e.button !== 0) return; // primary button / touch only
+    dittoToggled = !dittoToggled;
+    if (!dittoToggled) dittoHover = false; // stop even mid-hover; hover resumes on the next mouse-over
+    updateDitto();
+});
+new Image().src = "ditto.gif"; // preload so the first hover starts dancing right away
 
 renderThemeOptions();
 startDaily();

@@ -16,7 +16,7 @@
         <a class="hub-nav" href="../">← All apps</a>
         <div class="app">
             <header class="title">
-                <h1><span>Pokopia Doku</span><img class="title-ditto" src="ditto.gif" alt=""></h1>
+                <h1><span>Pokopia Doku</span><span id="ditto" class="title-ditto-wrap"><img class="title-ditto" src="ditto-still.gif" alt=""></span></h1>
             </header>
 
             <div class="toolbar mode-bar">
@@ -50,7 +50,7 @@
 
             <div id="board" class="board"></div>
 
-            <!-- PokeDoku-style PP readout: guesses left, like a move's PP -->
+            <!-- PP readout: guesses left, like a move's PP -->
             <div class="stats" aria-live="polite">
                 <span class="stat"><span class="stat-label">PP</span> <span id="ppValue"></span></span>            </div>
 
@@ -93,6 +93,19 @@
                 </div>
                 <p id="explainText" class="explain-text"></p>
                 <p id="explainCount" class="explain-count"></p>
+            </div>
+        </div>
+
+        <div id="answers" class="overlay" hidden>
+            <div class="panel" role="dialog" aria-modal="true" aria-labelledby="answersTitle">
+                <div class="panel-head">
+                    <div>
+                        <p id="answersCount" class="explain-tag"></p>
+                        <p id="answersTitle" class="panel-title"></p>
+                    </div>
+                    <button id="answersClose" class="icon-btn" aria-label="Close">✕</button>
+                </div>
+                <ul id="answersList" class="picker-list answers-list"></ul>
             </div>
         </div>
 

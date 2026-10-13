@@ -11,6 +11,11 @@
     --muted: #9aa0ab;
 }
 
+/* No double-tap zoom (pinch zoom still works) */
+html {
+    touch-action: manipulation;
+}
+
 body {
     margin: 0;
     font-family: system-ui, sans-serif;

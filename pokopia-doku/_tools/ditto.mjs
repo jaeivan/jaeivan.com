@@ -2,7 +2,9 @@
 //
 //   node pokopia-doku/_tools/ditto.mjs
 //
-// Writes pokopia-doku/ditto.gif (title, tight) and pokopia-doku/tile.gif (hub tile, 4:3 with padding).
+// Writes pokopia-doku/ditto.gif (title, tight), ditto-still.gif (title at rest, shown until
+// hovered or tapped), tile.gif (hub tile, 4:3 with padding) and tile-still.gif (hub tile at
+// rest, animated on hover).
 // Edit MAP / DANCE below to change the art or the moves. The GIF encoder is shared: _tools/pixel-gif.mjs.
 
 import path from "node:path";
@@ -82,4 +84,12 @@ for (const [file, canvas] of [
 ]) {
     const info = writePixelGif(path.join(OUT, file), { frames, colors: COLORS, canvas });
     console.log(`wrote ${file} (${info.width}×${info.height}, ${info.frames} frames, ${(info.bytes / 1024).toFixed(1)} KB)`);
+}
+// Still versions: the dance's first (neutral) pose on the same canvases, so swapping images doesn't shift Ditto.
+for (const [file, canvas] of [
+    ["ditto-still.gif", { width: CW, height: CH, dx: 0, dy: 0 }],
+    ["tile-still.gif", { width: 40, height: 30, dx: 6, dy: 3 }],
+]) {
+    const info = writePixelGif(path.join(OUT, file), { frames: frames.slice(0, 1), colors: COLORS, canvas });
+    console.log(`wrote ${file} (${info.width}×${info.height}, 1 frame, ${(info.bytes / 1024).toFixed(1)} KB)`);
 }
