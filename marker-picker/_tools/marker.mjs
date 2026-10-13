@@ -2,7 +2,8 @@
 //
 //   node marker-picker/_tools/marker.mjs
 //
-// Writes marker-picker/marker.gif (app title, tight) and marker-picker/tile.gif (hub tile, 4:3).
+// Writes marker-picker/marker.gif (app title, tight), marker-picker/tile.gif (hub tile, 4:3)
+// and tile-still.gif (hub tile at rest, animated on hover).
 // The GIF encoder is shared: _tools/pixel-gif.mjs.
 
 import path from "node:path";
@@ -106,3 +107,10 @@ for (const [file, canvas] of [
     const info = writePixelGif(path.join(OUT, file), { frames, colors: COLORS, canvas });
     console.log(`wrote ${file} (${info.width}×${info.height}, ${info.frames} frames, ${(info.bytes / 1024).toFixed(1)} KB)`);
 }
+// Still hub tile: the idle's first (neutral) pose on the tile canvas.
+const still = writePixelGif(path.join(OUT, "tile-still.gif"), {
+    frames: frames.slice(0, 1),
+    colors: COLORS,
+    canvas: { width: 40, height: 30, dx: 10, dy: 1 },
+});
+console.log(`wrote tile-still.gif (${still.width}×${still.height}, 1 frame, ${(still.bytes / 1024).toFixed(1)} KB)`);

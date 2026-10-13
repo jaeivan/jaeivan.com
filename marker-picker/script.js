@@ -117,6 +117,30 @@ const mode = document.getElementById("mode");
 let locked = new Set();
 let selected = new Set();
 
+// Picks, locks and mode survive a refresh. Saved by color name so editing the list above
+// can't shift them onto other colors; names that no longer exist are dropped.
+const STORAGE_KEY = "marker-picker:v1";
+
+function save() {
+  const names = (set) => [...set].map((i) => colors[i][0]);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode: mode.value, selected: names(selected), locked: names(locked) }));
+  } catch {} // storage blocked (e.g. private mode): just don't persist
+}
+
+function load() {
+  let saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch {}
+  if (!saved) return;
+  const indices = (list) =>
+    (Array.isArray(list) ? list : []).map((name) => colors.findIndex((c) => c[0] === name)).filter((i) => i >= 0);
+  if ([...mode.options].some((o) => o.value === saved.mode)) mode.value = saved.mode;
+  selected = new Set(indices(saved.selected).slice(0, 4));
+  locked = new Set(indices(saved.locked).filter((i) => selected.has(i)));
+}
+
 function pool() {
   switch (mode.value) {
     case "Warm":
@@ -134,6 +158,7 @@ function pool() {
 }
 
 function render() {
+  save();
   grid.innerHTML = "";
   chosenGrid.innerHTML = "";
 
@@ -215,4 +240,6 @@ document.getElementById("resetBtn").onclick = () => {
   selected.clear();
   render();
 };
+mode.onchange = save;
+load();
 render();
