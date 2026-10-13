@@ -23,6 +23,8 @@ window.TIME_GAP_CATEGORIES = [
     note: "Imperial dates: 999.M41 is year 999 of the 41st millennium (the year 40,999)." },
   { id: "starwars", label: "Star Wars", emoji: "🌌", special: true, dates: "yavin",
     note: "BBY and ABY mean before and after the Battle of Yavin, when the first Death Star blew up." },
+  { id: "dragonball", label: "Dragon Ball", emoji: "🐉", special: true, dates: "age",
+    note: "Dates use Dragon Ball's Age calendar: Goku meets Bulma in Age 749." },
 ];
 
 /*
@@ -32,7 +34,7 @@ window.TIME_GAP_CATEGORIES = [
  * the game avoids rounds where that fuzziness could flip the answer. `fuzz` overrides how
  * many years off a rough date might be (default 100 for BC, 25 for AD).
  * Fictional years count straight through with a year 0: Warhammer's 999.M41 is 40999,
- * Star Wars uses negative for BBY (19 BBY = -19) and positive for ABY.
+ * Star Wars uses negative for BBY (19 BBY = -19) and positive for ABY, and Dragon Ball's Age 749 is 749.
  * Categories with `dates: "month"` also need `month` (1-12); their gaps and `fuzz` are in months.
  * `yt` is a YouTube video ID: the card shows that video's thumbnail instead of the emoji
  * (the emoji is the fallback if the thumbnail can't load).
@@ -408,6 +410,33 @@ window.TIME_GAP_EVENTS = [
   { year: 15, label: "Rey is born", cat: "starwars", emoji: "🌟" },
   { year: 34, label: "Starkiller Base is destroyed (The Force Awakens)", cat: "starwars", emoji: "☀️" },
   { year: 35, label: "The Battle of Exegol (The Rise of Skywalker)", cat: "starwars", emoji: "⚡" },
+  // Dragon Ball
+  { year: 261, label: "Young Kami escapes Namek and lands on Earth", cat: "dragonball", emoji: "🌍", approx: true, fuzz: 30 },
+  { year: 430, label: "Master Roshi is born", cat: "dragonball", emoji: "🐢" },
+  { year: 450, label: "Mutaito seals King Piccolo away", cat: "dragonball", emoji: "🍚", approx: true, fuzz: 20 },
+  { year: 732, label: "Vegeta is born", cat: "dragonball", emoji: "👑" },
+  { year: 733, label: "Bulma is born", cat: "dragonball", emoji: "💙" },
+  { year: 736, label: "Krillin is born", cat: "dragonball", emoji: "🧑‍🦲" },
+  { year: 737, label: "Frieza destroys Planet Vegeta", cat: "dragonball", emoji: "💥" },
+  { year: 737, label: "Baby Kakarot is sent to Earth", cat: "dragonball", emoji: "🍼" },
+  { year: 749, label: "Goku meets Bulma and the hunt for the Dragon Balls begins", cat: "dragonball", emoji: "🐉" },
+  { year: 749, label: "Jackie Chun wins the 21st World Martial Arts Tournament", cat: "dragonball", emoji: "🥋" },
+  { year: 750, label: "Goku takes down the Red Ribbon Army", cat: "dragonball", emoji: "🎀" },
+  { year: 753, label: "Goku defeats King Piccolo", cat: "dragonball", emoji: "😈" },
+  { year: 756, label: "Goku beats Piccolo and marries Chi-Chi", cat: "dragonball", emoji: "💍" },
+  { year: 757, label: "Gohan is born", cat: "dragonball", emoji: "👶" },
+  { year: 761, label: "Raditz lands on Earth", cat: "dragonball", emoji: "☄️" },
+  { year: 762, label: "Goku turns Super Saiyan on Namek", cat: "dragonball", emoji: "⚡" },
+  { year: 764, label: "Future Trunks slices up Mecha Frieza", cat: "dragonball", emoji: "🗡️" },
+  { year: 766, label: "Trunks is born", cat: "dragonball", emoji: "🟣" },
+  { year: 767, label: "Gohan beats Cell at the Cell Games", cat: "dragonball", emoji: "🟢" },
+  { year: 774, label: "Majin Buu is released", cat: "dragonball", emoji: "🍬" },
+  { year: 778, label: "Beerus visits Earth (Battle of Gods)", cat: "dragonball", emoji: "🐱" },
+  { year: 779, label: "Pan is born", cat: "dragonball", emoji: "🧢" },
+  { year: 780, label: "The Tournament of Power", cat: "dragonball", emoji: "🏟️" },
+  { year: 784, label: "Goku meets Uub and leaves to train him", cat: "dragonball", emoji: "👋" },
+  { year: 789, label: "The Black Star Dragon Balls turn Goku back into a kid (GT)", cat: "dragonball", emoji: "⭐" },
+  { year: 889, label: "Goku Jr. fights Vegeta Jr. at the World Tournament (GT)", cat: "dragonball", emoji: "🧒", approx: true, fuzz: 5 },
   // YouTube videos
   { year: 2005, month: 4, label: "\"Me at the zoo\", the first YouTube video", cat: "youtube", emoji: "🐘", yt: "jNQXAC9IVRw" },
   { year: 2005, month: 12, label: "SNL's \"Lazy Sunday\" goes viral", cat: "youtube", emoji: "🧁" },

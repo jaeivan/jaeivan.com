@@ -123,6 +123,8 @@
             y = MONTHS[e.month - 1] + " " + e.year;
         } else if (dates === "yavin") {
             y = e.year > 0 ? e.year.toLocaleString("en-US") + " ABY" : (-e.year).toLocaleString("en-US") + " BBY";
+        } else if (dates === "age") {
+            y = "Age " + e.year;
         } else {
             y = e.year < 0 ? -e.year + " BC" : e.year < 1000 ? "AD " + e.year : String(e.year);
         }
