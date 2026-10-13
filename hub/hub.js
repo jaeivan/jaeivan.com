@@ -72,19 +72,4 @@
     const age = Date.now() - Date.parse(added + "T00:00:00");
     return age >= 0 && age < 30 * 24 * 60 * 60 * 1000;
   }
-
-  // Easter egg: the Konami code (↑↑↓↓←→←→BA) makes the tiles dance for a few seconds.
-  const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
-  let progress = 0;
-  let partyTimer;
-  document.addEventListener("keydown", (e) => {
-    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    progress = key === KONAMI[progress] ? progress + 1 : key === KONAMI[0] ? 1 : 0;
-    if (progress < KONAMI.length) return;
-    progress = 0;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    clearTimeout(partyTimer);
-    document.body.classList.add("hub-party");
-    partyTimer = setTimeout(() => document.body.classList.remove("hub-party"), 4000);
-  });
 })();
