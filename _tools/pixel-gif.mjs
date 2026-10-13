@@ -1,10 +1,12 @@
 // Shared helper for the pixel-art GIFs on hub tiles and in apps. Not served (underscore folder).
-// Tiny dependency-free GIF89a encoder plus helpers to turn character grids into frames.
+// Tiny dependency-free GIF89a encoder (and a still-PNG writer) plus helpers to turn character
+// grids into frames.
 //
 // A sprite frame is an array of strings (or arrays of characters); each character is a
 // palette key, and "." is transparent.
 
 import fs from "node:fs";
+import zlib from "node:zlib";
 
 // Write an animated, looping GIF.
 //   frames:  [{ grid, ms }]   grid = sprite rows (strings or char arrays)
@@ -124,4 +126,53 @@ export function encodeGif(width, height, palette, frames) {
     }
     out.push(0x3b);
     return Buffer.from(out);
+}
+
+// ---------- PNG (still images, e.g. link-preview cards) ----------
+
+// Write a still PNG from a single grid. Every "." cell gets `background`.
+export function writePixelPng(file, { grid, colors, background, scale = 8 }) {
+    const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    const lookup = Object.fromEntries(Object.entries(colors).map(([k, v]) => [k, rgb(v)]));
+    const bg = rgb(background);
+    const w = grid[0].length * scale, h = grid.length * scale;
+    const raw = Buffer.alloc((w * 3 + 1) * h);
+    for (let y = 0; y < h; y++) {
+        const row = grid[Math.floor(y / scale)];
+        raw[y * (w * 3 + 1)] = 0; // filter: none
+        for (let x = 0; x < w; x++) {
+            const [r, g, b] = lookup[row[Math.floor(x / scale)]] ?? bg;
+            raw.set([r, g, b], y * (w * 3 + 1) + 1 + x * 3);
+        }
+    }
+    const ihdr = Buffer.alloc(13);
+    ihdr.writeUInt32BE(w, 0);
+    ihdr.writeUInt32BE(h, 4);
+    ihdr.set([8, 2, 0, 0, 0], 8); // 8-bit RGB
+    const png = Buffer.concat([
+        Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+        pngChunk("IHDR", ihdr),
+        pngChunk("IDAT", zlib.deflateSync(raw, { level: 9 })),
+        pngChunk("IEND", Buffer.alloc(0)),
+    ]);
+    fs.writeFileSync(file, png);
+    return { width: w, height: h, bytes: png.length };
+}
+
+function pngChunk(type, data) {
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(data.length);
+    const body = Buffer.concat([Buffer.from(type, "ascii"), data]);
+    const crc = Buffer.alloc(4);
+    crc.writeUInt32BE(crc32(body));
+    return Buffer.concat([len, body, crc]);
+}
+
+function crc32(buf) {
+    let c = ~0;
+    for (const byte of buf) {
+        c ^= byte;
+        for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xedb88320 & -(c & 1));
+    }
+    return ~c >>> 0;
 }

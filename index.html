@@ -4,6 +4,17 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>jaeivan</title>
+        <meta name="description" content="A hub of small, handmade web apps by Jaeivan.">
+        <link rel="icon" href="favicon.gif" type="image/gif">
+        <!-- Link previews need full URLs (crawlers don't resolve relative paths) -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://jaeivan.com/">
+        <meta property="og:title" content="jaeivan">
+        <meta property="og:description" content="A hub of small, handmade web apps by Jaeivan.">
+        <meta property="og:image" content="https://jaeivan.com/og.png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta name="twitter:card" content="summary_large_image">
         <link rel="stylesheet" href="shared/theme.css">
         <link rel="stylesheet" href="hub/hub.css">
         <script src="shared/theme.js"></script>
@@ -11,7 +22,12 @@
     <body>
         <main class="hub">
             <header class="hub-header">
-                <h1>jaeivan</h1>
+                <h1>
+                    <picture>
+                        <source srcset="hub/logo-still.gif" media="(prefers-reduced-motion: reduce)">
+                        <img class="hub-logo" src="hub/logo.gif" width="256" height="68" alt="jaeivan">
+                    </picture>
+                </h1>
                 <p>Stuff for my girlfriend</p>
             </header>
             <div id="apps"></div>
