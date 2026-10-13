@@ -464,7 +464,7 @@ const state = {
     difficulty: "medium",
     grid: null,
     cells: Array(9).fill(null),
-    missed: Array(9).fill(false), // squares with a wrong guess (shared as ❌ unless later solved)
+    missed: Array(9).fill(false), // squares with a wrong guess (shared as 🟥 unless later solved)
     guessesLeft: null,
     gaveUp: false,
     hintsUsed: 0,
@@ -1028,8 +1028,8 @@ function shareText() {
     const title = state.mode === "daily" ? `Pokopia Doku · ${formatDate(state.date)}` : "Pokopia Doku · Unlimited";
     const hints = state.hintsUsed ? ` 💡${state.hintsUsed}` : "";
     const theme = state.grid.theme ? `\nTheme: ${state.grid.theme.name}` : "";
-    // ✅ solved, ❌ guessed wrong and never solved, ⬜ never tried.
-    const emoji = (i) => (state.cells[i] ? "✅" : state.missed[i] ? "❌" : "⬜");
+    // 🟩 solved, 🟥 guessed wrong and never solved, ⬜ never tried.
+    const emoji = (i) => (state.cells[i] ? "🟩" : state.missed[i] ? "🟥" : "⬜");
     const lines = [0, 1, 2].map((r) => [0, 1, 2].map((col) => emoji(r * 3 + col)).join(""));
     return `${title} (${c.label}) — ${filledCount()}/9${hints}${theme}\n${lines.join("\n")}\n${location.origin}${location.pathname}`;
 }

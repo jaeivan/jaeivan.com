@@ -116,10 +116,6 @@ const FONT = {
     U: ["#...#", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
     " ": ["..", "..", "..", "..", "..", "..", ".."],
 };
-const MARKS = { // 6×6, drawn in white on the solved (✅) and missed (❌) squares
-    Y: ["......", ".....#", "....#.", "#..#..", ".##...", "......"],
-    N: ["#....#", ".#..#.", "..##..", "..##..", ".#..#.", "#....#"],
-};
 const OG_W = 200, OG_H = 105;
 const card = Array.from({ length: OG_H }, () => Array(OG_W).fill("."));
 const stamp = (art, x0, y0, cell, ch) => art.forEach((row, y) => [...row].forEach((c, x) => {
@@ -136,24 +132,22 @@ for (const ch of TITLE) {
     tx += (FONT[ch][0].length + 1) * TCELL;
 }
 
-// Ditto (3× art px) beside a board; squares are 18 art px with a 3 px gap.
-const BOARD = ["YYN", "Y.Y", "NYY"], SQ = 18, GAP = 3;
+// Ditto (3× art px) beside a board (G solved, R missed, E empty); squares are 18 art px with a 3 px gap.
+const BOARD = ["GGR", "GEG", "RGG"], SQ = 18, GAP = 3;
 const boardW = 3 * SQ + 2 * GAP, dittoW = CW * 3, spread = 12;
 const left = Math.floor((OG_W - dittoW - spread - boardW) / 2), top = 34;
 stamp(frames[0].grid, left, top + boardW - CH * 3, 3); // feet level with the board bottom
-BOARD.forEach((row, r) => [...row].forEach((mark, c) => {
+BOARD.forEach((row, r) => [...row].forEach((fill, c) => {
     const x0 = left + dittoW + spread + c * (SQ + GAP), y0 = top + r * (SQ + GAP);
-    const fill = { Y: "G", N: "R", ".": "E" }[mark];
     for (let y = 0; y < SQ; y++) for (let x = 0; x < SQ; x++) {
         const edge = x === 0 || y === 0 || x === SQ - 1 || y === SQ - 1;
         card[y0 + y][x0 + x] = edge ? "o" : fill;
     }
-    if (MARKS[mark]) stamp(MARKS[mark], x0 + 3, y0 + 3, 2, "W");
 }));
 
 const og = writePixelPng(path.join(OUT, "og.png"), {
     grid: card,
-    colors: { ...COLORS, T: "#5e3f7d", t: "#c39ae0", G: "#4caf6a", R: "#e5484d", E: "#f7f4fb", W: "#ffffff" },
+    colors: { ...COLORS, T: "#5e3f7d", t: "#c39ae0", G: "#4caf6a", R: "#e5484d", E: "#f7f4fb" },
     background: "#EBE1F6",
     scale: 6,
 });
