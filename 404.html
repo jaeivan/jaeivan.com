@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Lost · jaeivan</title>
+        <!-- GitHub Pages serves this page at any missing path (e.g. /a/b/c), so unlike every
+             other page it uses root-absolute paths. -->
+        <link rel="stylesheet" href="/shared/theme.css">
+        <script src="/shared/theme.js"></script>
+        <style>
+            :root {
+                --bg: #fbfaf7;
+                --text: #1f2937;
+                --muted: #6b7280;
+                --accent: #b967ff;
+                --accent-text: #ffffff;
+            }
+
+            :root[data-theme="dark"] {
+                --bg: #15161a;
+                --text: #e7e9ee;
+                --muted: #9aa0ab;
+                --accent: #c98bff;
+                --accent-text: #15161a;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: grid;
+                place-items: center;
+                padding: 64px 16px;
+                box-sizing: border-box;
+                font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                text-align: center;
+            }
+
+            .lost img {
+                width: 144px;
+                height: auto;
+                image-rendering: pixelated;
+            }
+
+            .lost h1 {
+                margin: 8px 0 0;
+                font-size: 3.5rem;
+                font-weight: 800;
+                letter-spacing: -.02em;
+                background: linear-gradient(90deg, #ff71ce, #b967ff, #01cdfe);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .lost p {
+                margin: 4px 0 28px;
+                color: var(--muted);
+            }
+
+            .lost a {
+                display: inline-block;
+                padding: 10px 18px;
+                border-radius: 999px;
+                background: var(--accent);
+                color: var(--accent-text);
+                font-weight: 600;
+                text-decoration: none;
+                transition: transform .15s;
+            }
+
+            .lost a:hover,
+            .lost a:focus-visible {
+                transform: translateY(-2px);
+            }
+        </style>
+    </head>
+    <body>
+        <main class="lost">
+            <img src="/404.gif" width="144" height="156" alt="A little ghost looking around, lost">
+            <h1>404</h1>
+            <p>This page wandered off.</p>
+            <a href="/">← Back to all apps</a>
+        </main>
+    </body>
+</html>
