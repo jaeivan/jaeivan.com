@@ -8,38 +8,46 @@
     var bestEl = document.getElementById("best");
     var resultEl = document.getElementById("result");
     var nextBtn = document.getElementById("next");
-    var catsEl = document.getElementById("cats");
+    var noteEl = document.getElementById("note");
+    var CATS = {};
     window.TIME_GAP_CATEGORIES.forEach(function (c) {
+        CATS[c.id] = c;
         var btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "cat";
+        btn.className = "cat" + (c.universe ? " cat-universe" : "");
         btn.dataset.cat = c.id;
         btn.setAttribute("aria-pressed", "false");
         btn.textContent = c.emoji + " " + c.label;
-        catsEl.appendChild(btn);
+        document.getElementById(c.universe ? "universes" : "cats").appendChild(btn);
     });
-    var catButtons = catsEl.querySelectorAll(".cat");
+    var catButtons = document.querySelectorAll(".cat");
+    var realCount = window.TIME_GAP_CATEGORIES.filter(function (c) { return !c.universe; }).length;
+
+    // Random means every real-world event; fictional universes are only played on their own.
+    var REAL = EVENTS.filter(function (e) { return !CATS[e.cat].universe; });
 
     var streak = 0;
     var best = loadBest();
     var round = null; // [{ a, b, gap }, { a, b, gap }]
     var answered = false;
     var recent = []; // events shown lately, so they don't repeat every round
-    var cats = []; // chosen categories; empty means Random (every category)
-    var pool = EVENTS;
+    var cats = []; // chosen categories; empty means Random (every real-world category)
+    var pool = REAL;
 
-    // There is no year 0, so 1 BC is followed directly by AD 1.
-    function astro(year) {
-        return year < 0 ? year + 1 : year;
+    // Real years have no year 0, so 1 BC is followed directly by AD 1.
+    // Fictional calendars count straight through.
+    function astro(e) {
+        return e.year < 0 && !CATS[e.cat].universe ? e.year + 1 : e.year;
     }
 
     function gapOf(a, b) {
-        return Math.abs(astro(a.year) - astro(b.year));
+        return Math.abs(astro(a) - astro(b));
     }
 
     // How far off an "approx" date might be, so a round never hinges on it.
     function fuzz(e) {
         if (!e.approx) return 0;
+        if (e.fuzz !== undefined) return e.fuzz;
         return e.year < 0 ? 100 : 25;
     }
 
@@ -97,7 +105,17 @@
     }
 
     function formatYear(e) {
-        var y = e.year < 0 ? -e.year + " BC" : e.year < 1000 ? "AD " + e.year : String(e.year);
+        var dates = CATS[e.cat].dates;
+        var y;
+        if (dates === "imperial") {
+            // 40999 → 999.M41; rough dates only give the millennium
+            var m = "M" + (Math.floor(e.year / 1000) + 1);
+            y = e.approx ? m : String(e.year % 1000).padStart(3, "0") + "." + m;
+        } else if (dates === "yavin") {
+            y = e.year > 0 ? e.year.toLocaleString("en-US") + " ABY" : (-e.year).toLocaleString("en-US") + " BBY";
+        } else {
+            y = e.year < 0 ? -e.year + " BC" : e.year < 1000 ? "AD " + e.year : String(e.year);
+        }
         return (e.approx ? "c. " : "") + y;
     }
 
@@ -212,17 +230,22 @@
             cats = [];
         } else if (cats.indexOf(cat) !== -1) {
             cats = cats.filter(function (c) { return c !== cat; });
+        } else if (CATS[cat].universe) {
+            cats = [cat]; // a universe is played on its own
         } else {
-            cats = cats.concat(cat);
+            cats = cats.filter(function (c) { return !CATS[c].universe; }).concat(cat);
         }
-        // Every category picked is the same as Random.
-        if (cats.length === catButtons.length - 1) cats = [];
+        // Every real-world category picked is the same as Random.
+        if (cats.length === realCount) cats = [];
 
         catButtons.forEach(function (btn) {
             var c = btn.dataset.cat;
             btn.setAttribute("aria-pressed", String(c === "random" ? !cats.length : cats.indexOf(c) !== -1));
         });
-        pool = cats.length ? EVENTS.filter(function (e) { return cats.indexOf(e.cat) !== -1; }) : EVENTS;
+        pool = cats.length ? EVENTS.filter(function (e) { return cats.indexOf(e.cat) !== -1; }) : REAL;
+        var universe = cats.length === 1 && CATS[cats[0]].universe ? CATS[cats[0]] : null;
+        noteEl.hidden = !universe;
+        noteEl.textContent = universe ? universe.note : "";
         recent = [];
 
         // A new set of events starts a fresh streak.

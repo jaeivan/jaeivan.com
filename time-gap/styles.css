@@ -103,6 +103,44 @@ h1 {
     outline-offset: 2px;
 }
 
+.cats-heading {
+    margin: 14px 0 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cats-heading + .cats {
+    margin-top: 8px;
+}
+
+.cat-universe {
+    border-style: dashed;
+}
+
+.cat-universe[aria-pressed="true"] {
+    border-style: solid;
+}
+
+.universe-note {
+    max-width: 480px;
+    margin: 14px auto 0;
+    padding: 8px 12px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.universe-note[hidden] {
+    display: none;
+}
+
 .scores {
     display: flex;
     justify-content: center;

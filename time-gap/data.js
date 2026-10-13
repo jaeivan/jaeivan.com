@@ -12,13 +12,23 @@ window.TIME_GAP_CATEGORIES = [
   { id: "anime", label: "Anime & manga", emoji: "🍙" },
   { id: "sports", label: "Sports", emoji: "⚽" },
   { id: "pop", label: "Pop culture", emoji: "🧸" },
+
+  // Fictional universes: played one at a time and never mixed into Random. `dates` picks how
+  // years are written (see formatYear in script.js) and `note` explains that calendar.
+  { id: "wh40k", label: "Warhammer 40,000", emoji: "💀", universe: true, dates: "imperial",
+    note: "Imperial dates: 999.M41 is year 999 of the 41st millennium (the year 40,999)." },
+  { id: "starwars", label: "Star Wars", emoji: "🌌", universe: true, dates: "yavin",
+    note: "BBY and ABY mean before and after the Battle of Yavin, when the first Death Star blew up." },
 ];
 
 /*
  * Moments in time, grouped by category (`cat`, one of the ids above).
  * `year` is negative for BC (-30 = 30 BC; there is no year 0).
  * Set `approx: true` when the date is only known roughly; it shows as "c." and
- * the game avoids rounds where that fuzziness could flip the answer.
+ * the game avoids rounds where that fuzziness could flip the answer. `fuzz` overrides how
+ * many years off a rough date might be (default 100 for BC, 25 for AD).
+ * Fictional years count straight through with a year 0: Warhammer's 999.M41 is 40999,
+ * Star Wars uses negative for BBY (19 BBY = -19) and positive for ABY.
  */
 window.TIME_GAP_EVENTS = [
   // History
@@ -338,4 +348,57 @@ window.TIME_GAP_EVENTS = [
   { year: 1996, label: "The Tamagotchi goes on sale", cat: "pop", emoji: "🥚" },
   { year: 1998, label: "Furby goes on sale", cat: "pop", emoji: "🦉" },
   { year: 2017, label: "The fidget spinner craze", cat: "pop", emoji: "🌪️" },
+
+  // Warhammer 40,000
+  { year: 14000, label: "Humanity's Dark Age of Technology begins", cat: "wh40k", emoji: "🤖", approx: true, fuzz: 1000 },
+  { year: 24000, label: "The Age of Strife plunges humanity into chaos", cat: "wh40k", emoji: "🌪️", approx: true, fuzz: 1000 },
+  { year: 29000, label: "The Fall of the Aeldari tears open the Eye of Terror", cat: "wh40k", emoji: "👁️", approx: true, fuzz: 700 },
+  { year: 29798, label: "The Emperor launches the Great Crusade", cat: "wh40k", emoji: "🚀" },
+  { year: 30000, label: "Horus is named Warmaster after Ullanor", cat: "wh40k", emoji: "🎖️" },
+  { year: 30005, label: "The Horus Heresy begins at Isstvan III", cat: "wh40k", emoji: "🐍" },
+  { year: 30006, label: "The Drop Site Massacre on Isstvan V", cat: "wh40k", emoji: "🩸" },
+  { year: 30014, label: "The Siege of Terra; the Emperor goes on the Golden Throne", cat: "wh40k", emoji: "🪑" },
+  { year: 30021, label: "The Second Founding splits the Space Marine Legions", cat: "wh40k", emoji: "🛡️" },
+  { year: 30781, label: "Abaddon's First Black Crusade", cat: "wh40k", emoji: "⚫" },
+  { year: 31544, label: "The War of the Beast", cat: "wh40k", emoji: "🐗" },
+  { year: 35300, label: "The Age of Apostasy ends with Goge Vandire's fall", cat: "wh40k", emoji: "⛪", approx: true, fuzz: 300 },
+  { year: 40139, label: "The Gothic War begins", cat: "wh40k", emoji: "🏰" },
+  { year: 40444, label: "The First War for Armageddon", cat: "wh40k", emoji: "🔥" },
+  { year: 40745, label: "Hive Fleet Behemoth attacks Macragge", cat: "wh40k", emoji: "🦂" },
+  { year: 40755, label: "The Sabbat Worlds Crusade begins", cat: "wh40k", emoji: "⚔️" },
+  { year: 40901, label: "The Badab War begins", cat: "wh40k", emoji: "🦈" },
+  { year: 40941, label: "Ghazghkull's Second War for Armageddon", cat: "wh40k", emoji: "🟢" },
+  { year: 40997, label: "Hive Fleet Leviathan appears", cat: "wh40k", emoji: "🦑" },
+  { year: 40998, label: "The Third War for Armageddon", cat: "wh40k", emoji: "💣" },
+  { year: 40999, label: "Cadia falls to the 13th Black Crusade", cat: "wh40k", emoji: "🏳️" },
+  { year: 40999, label: "Roboute Guilliman is resurrected", cat: "wh40k", emoji: "🔵" },
+
+  // Star Wars
+  { year: -25000, label: "The Galactic Republic is founded", cat: "starwars", emoji: "🏛️", approx: true, fuzz: 1000 },
+  { year: -1000, label: "Darth Bane creates the Sith Rule of Two", cat: "starwars", emoji: "✌️", approx: true, fuzz: 50 },
+  { year: -896, label: "Yoda is born", cat: "starwars", emoji: "🐸" },
+  { year: -232, label: "The Great Hyperspace Disaster (The High Republic)", cat: "starwars", emoji: "💫" },
+  { year: -132, label: "The events of The Acolyte", cat: "starwars", emoji: "🗡️" },
+  { year: -102, label: "Count Dooku is born", cat: "starwars", emoji: "🧔" },
+  { year: -84, label: "Palpatine is born", cat: "starwars", emoji: "👴" },
+  { year: -57, label: "Obi-Wan Kenobi is born", cat: "starwars", emoji: "🧥" },
+  { year: -46, label: "Padmé Amidala is born", cat: "starwars", emoji: "👑" },
+  { year: -41, label: "Anakin Skywalker is born", cat: "starwars", emoji: "👶" },
+  { year: -41, label: "Grogu is born", cat: "starwars", emoji: "🟩" },
+  { year: -32, label: "The Battle of Naboo (The Phantom Menace)", cat: "starwars", emoji: "🏎️" },
+  { year: -22, label: "The Clone Wars begin at Geonosis", cat: "starwars", emoji: "👥" },
+  { year: -19, label: "Order 66 and the rise of the Empire", cat: "starwars", emoji: "🔥" },
+  { year: -19, label: "Luke and Leia are born", cat: "starwars", emoji: "👫" },
+  { year: -10, label: "Han Solo meets Chewbacca", cat: "starwars", emoji: "🐻", approx: true, fuzz: 3 },
+  { year: -9, label: "The events of the Obi-Wan Kenobi series", cat: "starwars", emoji: "🏜️" },
+  { year: -5, label: "Cassian Andor joins the rebellion (Andor)", cat: "starwars", emoji: "✊" },
+  { year: 0, label: "The Death Star is destroyed at Yavin", cat: "starwars", emoji: "💥" },
+  { year: 3, label: "The Battle of Hoth", cat: "starwars", emoji: "❄️" },
+  { year: 4, label: "The Battle of Endor; Vader turns on the Emperor", cat: "starwars", emoji: "🌲" },
+  { year: 5, label: "Ben Solo is born", cat: "starwars", emoji: "🍼" },
+  { year: 5, label: "The Battle of Jakku", cat: "starwars", emoji: "🛩️" },
+  { year: 9, label: "The Mandalorian takes on Grogu", cat: "starwars", emoji: "🪖" },
+  { year: 15, label: "Rey is born", cat: "starwars", emoji: "🌟" },
+  { year: 34, label: "Starkiller Base is destroyed (The Force Awakens)", cat: "starwars", emoji: "☀️" },
+  { year: 35, label: "The Battle of Exegol (The Rise of Skywalker)", cat: "starwars", emoji: "⚡" },
 ];
