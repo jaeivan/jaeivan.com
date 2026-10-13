@@ -106,3 +106,32 @@ body {
     color: var(--muted);
     font-size: .8rem;
 }
+
+.hub-footer p {
+    margin: 12px 0 0;
+}
+
+.hub-footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-size: .9rem;
+}
+
+.hub-footer-links a,
+.hub-footer p a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .15s;
+}
+
+.hub-footer-links a:hover,
+.hub-footer-links a:focus-visible,
+.hub-footer p a:hover,
+.hub-footer p a:focus-visible {
+    color: var(--text);
+}

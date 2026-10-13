@@ -56,4 +56,8 @@
     tile.addEventListener("focus", () => tile.matches(":focus-visible") && play());
     tile.addEventListener("blur", stop);
   }
+
+  // Keep the footer's copyright year current (the HTML holds a no-JS fallback).
+  const year = document.querySelector(".hub-footer-year");
+  if (year) year.textContent = new Date().getFullYear();
 })();
