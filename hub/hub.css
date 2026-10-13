@@ -86,6 +86,45 @@ body {
     background: color-mix(in srgb, var(--tile-color, #eef2ff) var(--tile-mix), var(--card));
     font-size: 4rem;
     overflow: hidden;
+    position: relative;
+}
+
+/* "New" badge for apps added in the last 30 days (`added` in apps.js) */
+.tile-new {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #ff71ce;
+    color: #ffffff;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+}
+
+/* Konami-code easter egg (hub.js): tiles wobble and cycle colors for a few seconds */
+.hub-party .tile {
+    animation: hub-wobble .45s ease-in-out infinite alternate;
+}
+
+.hub-party .tile:nth-child(even) {
+    animation-delay: -.22s;
+}
+
+.hub-party .tile-art {
+    animation: hub-hue 1.2s linear infinite;
+}
+
+@keyframes hub-wobble {
+    from { transform: translateY(0) rotate(-3deg); }
+    to { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes hub-hue {
+    to { filter: hue-rotate(360deg); }
 }
 
 .tile-art img {
