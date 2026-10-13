@@ -315,6 +315,55 @@
         buttons[0].focus();
     });
 
+    // Title hourglass (decorative): runs its sand out and flips while hovered with a mouse; a tap,
+    // click, Enter or Space toggles it on so it keeps going, and another stops it (even mid-hover).
+    // Swapping the image restarts the GIF, so it's only swapped when the animation really starts
+    // or stops, and a stop waits for the current loop to end: the loop ends with the flip back to
+    // the same pose as hourglass-still.gif, so there's no jump.
+    var HOURGLASS_LOOP_MS = 4720; // printed by `node time-gap/_tools/hourglass.mjs`
+    var hourglass = document.getElementById("hourglass");
+    var hourglassImg = hourglass.querySelector("img");
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var hgHover = false, hgToggled = false, hgPlaying = false, hgStart = 0, hgStopTimer;
+
+    function updateHourglass() {
+        clearTimeout(hgStopTimer);
+        if ((hgHover || hgToggled) && !reduceMotion.matches) {
+            if (hgPlaying) return; // already playing (maybe winding down): keep going
+            hgPlaying = true;
+            hgStart = performance.now();
+            hourglassImg.src = "hourglass.gif";
+        } else if (hgPlaying) {
+            var untilLoopEnd = HOURGLASS_LOOP_MS - ((performance.now() - hgStart) % HOURGLASS_LOOP_MS);
+            hgStopTimer = setTimeout(function () {
+                hgPlaying = false;
+                hourglassImg.src = "hourglass-still.gif";
+            }, untilLoopEnd);
+        }
+    }
+    function toggleHourglass() {
+        hgToggled = !hgToggled;
+        if (!hgToggled) hgHover = false; // stop even mid-hover; hover resumes on the next mouse-over
+        hourglass.setAttribute("aria-pressed", hgToggled);
+        updateHourglass();
+    }
+
+    hourglass.addEventListener("pointerenter", function (e) {
+        if (e.pointerType === "mouse") (hgHover = true), updateHourglass();
+    });
+    hourglass.addEventListener("pointerleave", function (e) {
+        if (e.pointerType === "mouse") (hgHover = false), updateHourglass();
+    });
+    hourglass.addEventListener("pointerup", function (e) {
+        if (e.button === 0) toggleHourglass(); // primary button / touch only
+    });
+    hourglass.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        toggleHourglass();
+    });
+    new Image().src = "hourglass.gif"; // preload so the first hover starts right away
+
     updateScores();
     newRound();
 })();

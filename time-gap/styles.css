@@ -54,8 +54,31 @@ header {
 }
 
 h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25em;
     margin: 0 0 6px;
     font-size: 2rem;
+}
+
+/* Pixel hourglass (hourglass.gif, from _tools/hourglass.mjs) in place of an emoji.
+   It runs its sand out and flips while hovered, and toggles on tap/click/Enter/Space; see script.js */
+.title-hourglass-wrap {
+    display: flex;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.title-hourglass-wrap:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.title-hourglass {
+    height: 1.6em;
+    width: auto;
+    image-rendering: pixelated;
 }
 
 .tagline {
