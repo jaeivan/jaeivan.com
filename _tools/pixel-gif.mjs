@@ -33,6 +33,11 @@ export function writePixelGif(file, { frames, colors, canvas, scale = 8 }) {
     return { width: w, height: h, frames: frames.length, bytes: gif.length };
 }
 
+// Copy a sprite onto a blank width×height grid at (dx, dy), e.g. to pad it for a PNG icon.
+export function place(grid, { width, height, dx = 0, dy = 0 }) {
+    return Array.from({ length: height }, (_, y) => Array.from({ length: width }, (_, x) => grid[y - dy]?.[x - dx] ?? "."));
+}
+
 // Redraw an outline ring: any filled cell touching empty space (4-neighbors) becomes `edge`.
 // Cells that were `edge` but are now interior become `fill`.
 export function outline(grid, edge = "o", fill = "b") {

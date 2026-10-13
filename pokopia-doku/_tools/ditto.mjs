@@ -4,12 +4,13 @@
 //
 // Writes pokopia-doku/ditto.gif (title, tight), ditto-still.gif (title at rest, shown until
 // hovered or tapped), tile.gif (hub tile, 4:3 with padding) and tile-still.gif (hub tile at
-// rest, animated on hover).
+// rest, animated on hover), favicon.gif (browser tab, square), icon.png (180×180 home-screen
+// icon on the tile color) and og.png (1200×630 link-preview card).
 // Edit MAP / DANCE below to change the art or the moves. The GIF encoder is shared: _tools/pixel-gif.mjs.
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { outline, writePixelGif } from "../../_tools/pixel-gif.mjs";
+import { outline, place, writePixelGif, writePixelPng } from "../../_tools/pixel-gif.mjs";
 
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -81,6 +82,7 @@ const frames = DANCE.map((f) => ({ grid: frame(f), ms: f.ms }));
 for (const [file, canvas] of [
     ["ditto.gif", { width: CW, height: CH, dx: 0, dy: 0 }],
     ["tile.gif", { width: 40, height: 30, dx: 6, dy: 3 }], // hub tile: 4:3, Ditto centered
+    ["favicon.gif", { width: CW, height: CW, dx: 0, dy: (CW - CH) / 2 }], // browser tab: square
 ]) {
     const info = writePixelGif(path.join(OUT, file), { frames, colors: COLORS, canvas });
     console.log(`wrote ${file} (${info.width}×${info.height}, ${info.frames} frames, ${(info.bytes / 1024).toFixed(1)} KB)`);
@@ -93,3 +95,60 @@ for (const [file, canvas] of [
     const info = writePixelGif(path.join(OUT, file), { frames: frames.slice(0, 1), colors: COLORS, canvas });
     console.log(`wrote ${file} (${info.width}×${info.height}, 1 frame, ${(info.bytes / 1024).toFixed(1)} KB)`);
 }
+// Home-screen icon: the neutral pose on the hub tile color, padded so rounded corners don't clip it.
+const icon = writePixelPng(path.join(OUT, "icon.png"), {
+    grid: place(frames[0].grid, { width: 36, height: 36, dx: 4, dy: 4 }),
+    colors: COLORS,
+    background: "#EBE1F6",
+    scale: 5,
+});
+console.log(`wrote icon.png (${icon.width}×${icon.height}, ${(icon.bytes / 1024).toFixed(1)} KB)`);
+
+// Link-preview card (og.png): the title over Ditto next to a finished 3×3 board.
+// 200×105 art px at 6× = 1200×630.
+const FONT = {
+    P: ["####.", "#...#", "#...#", "####.", "#....", "#....", "#...."],
+    O: [".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+    K: ["#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"],
+    I: ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "#####"],
+    A: [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+    D: ["####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####."],
+    U: ["#...#", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+    " ": ["..", "..", "..", "..", "..", "..", ".."],
+};
+const OG_W = 200, OG_H = 105;
+const card = Array.from({ length: OG_H }, () => Array(OG_W).fill("."));
+const stamp = (art, x0, y0, cell, ch) => art.forEach((row, y) => [...row].forEach((c, x) => {
+    if (c === ".") return;
+    for (let v = 0; v < cell; v++) for (let u = 0; u < cell; u++) card[y0 + y * cell + v][x0 + x * cell + u] = ch ?? c;
+}));
+
+const TITLE = "POKOPIA DOKU", TCELL = 2, TTOP = 10;
+const titleW = [...TITLE].reduce((w, ch) => w + (FONT[ch][0].length + 1) * TCELL, -TCELL);
+let tx = Math.floor((OG_W - titleW) / 2);
+for (const ch of TITLE) {
+    stamp(FONT[ch], tx + 1, TTOP + 1, TCELL, "t"); // drop shadow
+    stamp(FONT[ch], tx, TTOP, TCELL, "T");
+    tx += (FONT[ch][0].length + 1) * TCELL;
+}
+
+// Ditto (3× art px) beside a board (G solved, R missed, E empty); squares are 18 art px with a 3 px gap.
+const BOARD = ["GGR", "GEG", "RGG"], SQ = 18, GAP = 3;
+const boardW = 3 * SQ + 2 * GAP, dittoW = CW * 3, spread = 12;
+const left = Math.floor((OG_W - dittoW - spread - boardW) / 2), top = 34;
+stamp(frames[0].grid, left, top + boardW - CH * 3, 3); // feet level with the board bottom
+BOARD.forEach((row, r) => [...row].forEach((fill, c) => {
+    const x0 = left + dittoW + spread + c * (SQ + GAP), y0 = top + r * (SQ + GAP);
+    for (let y = 0; y < SQ; y++) for (let x = 0; x < SQ; x++) {
+        const edge = x === 0 || y === 0 || x === SQ - 1 || y === SQ - 1;
+        card[y0 + y][x0 + x] = edge ? "o" : fill;
+    }
+}));
+
+const og = writePixelPng(path.join(OUT, "og.png"), {
+    grid: card,
+    colors: { ...COLORS, T: "#5e3f7d", t: "#c39ae0", G: "#4caf6a", R: "#e5484d", E: "#f7f4fb" },
+    background: "#EBE1F6",
+    scale: 6,
+});
+console.log(`wrote og.png (${og.width}×${og.height}, ${(og.bytes / 1024).toFixed(1)} KB)`);

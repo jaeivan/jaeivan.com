@@ -412,7 +412,7 @@ function loadDaily(date) {
     }
 }
 
-const SAVED_FIELDS = ["cells", "guessesLeft", "gaveUp", "hintsUsed", "hintTiers", "hintTargets", "browseUnlocked"];
+const SAVED_FIELDS = ["cells", "missed", "guessesLeft", "gaveUp", "hintsUsed", "hintTiers", "hintTargets", "browseUnlocked"];
 
 // Identifies a grid by its six headers. Saved progress only applies to the exact grid it was
 // played on, so a data/theme update that changes the day's grid can't misplace old answers.
@@ -464,6 +464,7 @@ const state = {
     difficulty: "medium",
     grid: null,
     cells: Array(9).fill(null),
+    missed: Array(9).fill(false), // squares with a wrong guess (shared as 🟥 unless later solved)
     guessesLeft: null,
     gaveUp: false,
     hintsUsed: 0,
@@ -479,6 +480,7 @@ const cfg = () => DIFFICULTIES[state.difficulty];
 
 function resetProgress(saved = {}) {
     state.cells = saved.cells ?? Array(9).fill(null);
+    state.missed = saved.missed ?? Array(9).fill(false);
     state.guessesLeft = saved.guessesLeft !== undefined ? saved.guessesLeft : cfg().guesses;
     state.gaveUp = saved.gaveUp ?? false;
     state.hintsUsed = saved.hintsUsed ?? 0;
@@ -1009,6 +1011,7 @@ function guess(p) {
     const correct = state.grid.cellAnswers[i].includes(p.id);
     if (state.guessesLeft !== null) state.guessesLeft--;
     if (correct) state.cells[i] = p.id;
+    else state.missed[i] = true;
     saveDaily();
     render();
     if (!correct) {
@@ -1025,7 +1028,9 @@ function shareText() {
     const title = state.mode === "daily" ? `Pokopia Doku · ${formatDate(state.date)}` : "Pokopia Doku · Unlimited";
     const hints = state.hintsUsed ? ` 💡${state.hintsUsed}` : "";
     const theme = state.grid.theme ? `\nTheme: ${state.grid.theme.name}` : "";
-    const lines = [0, 1, 2].map((r) => [0, 1, 2].map((col) => (state.cells[r * 3 + col] ? "🟩" : "⬜")).join(""));
+    // 🟩 solved, 🟥 guessed wrong and never solved, ⬜ never tried.
+    const emoji = (i) => (state.cells[i] ? "🟩" : state.missed[i] ? "🟥" : "⬜");
+    const lines = [0, 1, 2].map((r) => [0, 1, 2].map((col) => emoji(r * 3 + col)).join(""));
     return `${title} (${c.label}) — ${filledCount()}/9${hints}${theme}\n${lines.join("\n")}\n${location.origin}${location.pathname}`;
 }
 

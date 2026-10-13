@@ -28,7 +28,7 @@ window.HUB_APPS = [
     thumbnailStill: "tile-still.gif",
     color: "#FDE7D9",
     created: "2026-08-13",
-    updated: "2026-10-12",
+    updated: "2026-10-13",
   },
   {
     slug: "pokopia-doku",
