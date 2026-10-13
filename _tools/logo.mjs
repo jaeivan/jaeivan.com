@@ -3,7 +3,8 @@
 //   node _tools/logo.mjs
 //
 // Writes hub/logo.gif (hub header: a Game Boy-style wave, then a spin), hub/logo-still.gif (at rest),
-// favicon.gif (a spinning "J") and og.png (link-preview card, 1200×630).
+// favicon.gif (a spinning "J"), og.png (link-preview card, 1200×630) and 404.gif (the logo
+// glitching out, Spider-Verse style, for the "page not found" page).
 // The GIF/PNG encoders are shared: _tools/pixel-gif.mjs.
 
 import path from "node:path";
@@ -22,6 +23,9 @@ const COLORS = {
     k: "#ff71ce",
     S: "#5b2a86", // extruded sides, lit
     s: "#34185a", // extruded sides, shaded
+    M: "#ff2bd6", // glitch: magenta split, noise
+    X: "#00f0ff", // glitch: cyan split, noise
+    Y: "#fffb96", // glitch: scanline flash
 };
 const GRADIENT = ["c", "l", "v", "p", "m", "k"];
 
@@ -132,6 +136,63 @@ console.log("favicon.gif", writePixelGif(path.join(ROOT, "favicon.gif"), {
     frames: spin(bitmap("J"), ICON),
     colors: COLORS,
     canvas: { width: 16, height: 16, dx: 0, dy: 0 },
+    scale: 2,
+}));
+
+// 404: the face-on logo glitching like Miles in Into the Spider-Verse. Magenta/cyan copies split off
+// either side, horizontal slices tear sideways, a band flashes yellow and noise bars flicker, in
+// short bursts between calmer frames that keep a faint color fringe.
+function glitch(base, rand, { split = 1, slices = 0, shift = 0, flash = false, bars = 0 }) {
+    const H = base.length, W = base[0].length;
+    const pick = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+    let g = base.map((row) => row.map((_, x) => row[x - shift] ?? "."));
+    for (let i = 0; i < slices; i++) {
+        const y0 = pick(0, H - 3), h = pick(2, 6), dx = pick(-9, 9);
+        for (let y = y0; y < Math.min(H, y0 + h); y++) {
+            const row = g[y];
+            g[y] = row.map((_, x) => row[x - dx] ?? ".");
+        }
+    }
+    if (flash) {
+        const y0 = pick(4, H - 8);
+        for (let y = y0; y < y0 + pick(2, 4); y++) g[y] = g[y].map((c) => (c === "." || c === "o" ? c : "Y"));
+    }
+    const out = Array.from({ length: H }, () => Array(W).fill("."));
+    const stamp = (dx, dy, color) => g.forEach((row, y) => row.forEach((c, x) => {
+        if (c !== "." && out[y + dy]?.[x + dx] === ".") out[y + dy][x + dx] = color ?? c;
+    }));
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (g[y][x] !== ".") out[y][x] = g[y][x];
+    stamp(-split, split > 2 ? -1 : 0, "X");
+    stamp(split, split > 2 ? 1 : 0, "M");
+    for (let i = 0; i < bars; i++) {
+        const y = pick(0, H - 1), x0 = pick(0, W - 20), len = pick(4, 18), c = rand() < 0.5 ? "M" : "X";
+        for (let x = x0; x < x0 + len; x++) out[y][x] = c;
+    }
+    return out;
+}
+
+const GLITCH = { cell: 3, depth: 6, width: 144, height: 36 };
+const still = spinFrame(word, { ...GLITCH, angle: 0 });
+let glitchSeed = 3;
+const glitchRand = () => ((glitchSeed = (glitchSeed * 16807) % 2147483647) / 2147483647);
+const glitchFrames = [
+    [{ split: 1 }, 900],
+    [{ split: 3, slices: 2 }, 60],
+    [{ split: 6, slices: 3, flash: true }, 50],
+    [{ split: 2, shift: 4, bars: 4 }, 60],
+    [{ split: 8, slices: 4, bars: 2 }, 40],
+    [{ split: 3, shift: -3, slices: 1 }, 70],
+    [{ split: 1 }, 600],
+    [{ split: 4, slices: 3, bars: 3 }, 50],
+    [{ split: 2, flash: true, shift: -5 }, 60],
+    [{ split: 1 }, 1200],
+    [{ split: 5, slices: 5, bars: 5, flash: true }, 40],
+    [{ split: 2, slices: 2 }, 60],
+].map(([opts, ms]) => ({ grid: glitch(still, glitchRand, opts), ms }));
+console.log("404.gif", writePixelGif(path.join(ROOT, "404.gif"), {
+    frames: glitchFrames,
+    colors: COLORS,
+    canvas: { width: GLITCH.width, height: GLITCH.height, dx: 0, dy: 0 },
     scale: 2,
 }));
 
