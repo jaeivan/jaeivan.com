@@ -8,12 +8,15 @@
     var bestEl = document.getElementById("best");
     var resultEl = document.getElementById("result");
     var nextBtn = document.getElementById("next");
+    var catButtons = document.querySelectorAll(".cat");
 
     var streak = 0;
     var best = loadBest();
     var round = null; // [{ a, b, gap }, { a, b, gap }]
     var answered = false;
     var recent = []; // events shown lately, so they don't repeat every round
+    var cats = []; // chosen categories; empty means Random (every category)
+    var pool = EVENTS;
 
     // There is no year 0, so 1 BC is followed directly by AD 1.
     function astro(year) {
@@ -41,7 +44,7 @@
     function pick(exclude) {
         var e;
         do {
-            e = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+            e = pool[Math.floor(Math.random() * pool.length)];
         } while (exclude.indexOf(e) !== -1);
         return e;
     }
@@ -77,7 +80,9 @@
     }
 
     function remember(p, four) {
-        recent = recent.concat(four).slice(-16);
+        // Small pools can't skip as many, or there'd be nothing left to pick from.
+        var keep = Math.min(16, pool.length - 8);
+        recent = keep > 0 ? recent.concat(four).slice(-keep) : [];
         return p;
     }
 
@@ -189,6 +194,35 @@
 
     buttons.forEach(function (btn, i) {
         btn.addEventListener("click", function () { answer(i); });
+    });
+
+    function setCategory(cat) {
+        if (cat === "random") {
+            if (!cats.length) return; // already Random: keep the current round and streak
+            cats = [];
+        } else if (cats.indexOf(cat) !== -1) {
+            cats = cats.filter(function (c) { return c !== cat; });
+        } else {
+            cats = cats.concat(cat);
+        }
+        // All three picked is the same as Random.
+        if (cats.length === catButtons.length - 1) cats = [];
+
+        catButtons.forEach(function (btn) {
+            var c = btn.dataset.cat;
+            btn.setAttribute("aria-pressed", String(c === "random" ? !cats.length : cats.indexOf(c) !== -1));
+        });
+        pool = cats.length ? EVENTS.filter(function (e) { return cats.indexOf(e.cat) !== -1; }) : EVENTS;
+        recent = [];
+
+        // A new set of events starts a fresh streak.
+        streak = 0;
+        updateScores();
+        newRound();
+    }
+
+    catButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () { setCategory(btn.dataset.cat); });
     });
 
     nextBtn.addEventListener("click", function () {
