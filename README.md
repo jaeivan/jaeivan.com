@@ -7,6 +7,8 @@ A hub of small, independent web apps. Plain static HTML/CSS/JS, served by GitHub
 ```
 index.html       Hub home page (grid of app tiles)
 404.html         "Page not found" page with the logo glitching out (404.gif)
+robots.txt       Lets search engines crawl everything and points them at sitemap.xml
+sitemap.xml      Every page's full URL, for search engines (add new apps here)
 hub/             App registry (apps.js), tile rendering and hub styles
 shared/          hub-nav.css ("← All apps" button) and theme.js/.css (light/dark mode, used by every page)
 _template/       Starter files for a new app (ignored by GitHub Pages)
@@ -31,6 +33,7 @@ The top-right button cycles **Auto → Light → Dark**. Auto follows the device
 
 1. Copy `_template/` to `<slug>/` and build there, using relative paths only.
 2. Add an entry with the same `slug` to `hub/apps.js`, including `created` and `updated` dates. Bump `updated` whenever you change the app; tiles show a "New" or "Updated" badge for a week, and "Old" after a year without updates.
+3. For search engines: give the page a meta description and a canonical URL (the template has both), and add it to `sitemap.xml` and the `<noscript>` list in `index.html`.
 
 It goes live at `jaeivan.com/<slug>/`.
 
