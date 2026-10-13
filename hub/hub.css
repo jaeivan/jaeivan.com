@@ -21,6 +21,11 @@
     --tile-mix: 30%;
 }
 
+/* No double-tap zoom (pinch zoom still works) */
+html {
+    touch-action: manipulation;
+}
+
 body {
     margin: 0;
     font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
