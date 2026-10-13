@@ -167,6 +167,14 @@ body {
     margin: 12px 0 0;
 }
 
+.hub-footer .hub-footer-disclaimer {
+    max-width: 420px;
+    margin: 8px auto 0;
+    font-size: .7rem;
+    line-height: 1.5;
+    opacity: .8;
+}
+
 .hub-footer-links {
     display: flex;
     justify-content: center;

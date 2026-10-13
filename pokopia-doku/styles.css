@@ -84,6 +84,15 @@ body {
     padding: 64px 16px 40px;
 }
 
+/* Trademark disclaimer at the bottom of the page */
+.disclaimer {
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: .72rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
 /* Title: retro pixel font with a soft offset shadow */
 .title {
     text-align: center;
