@@ -3,7 +3,8 @@
  *
  * To add an app:
  *   1. Copy _template/ to <slug>/ (top level) and build it there.
- *   2. Add an entry below. `slug` must match the folder name.
+ *   2. Add an entry below. `slug` must match the folder name. The hub lists apps newest first
+ *      by `created`, whatever their order here.
  *
  * When you change an app, bump its `updated` date.
  *
