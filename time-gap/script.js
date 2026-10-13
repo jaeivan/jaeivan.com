@@ -274,6 +274,10 @@
         streak = 0;
         updateScores();
         newRound();
+
+        // The picker sits below the game, so bring the new round into view.
+        var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.scrollTo({ top: 0, behavior: still ? "auto" : "smooth" });
     }
 
     catButtons.forEach(function (btn) {

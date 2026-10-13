@@ -67,12 +67,18 @@ h1 {
     color: var(--text);
 }
 
+/* Category picker, below the game */
+.picker {
+    margin-top: 36px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
 .cats {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    margin-top: 18px;
 }
 
 .cat {
@@ -127,7 +133,7 @@ h1 {
 
 .special-note {
     max-width: 480px;
-    margin: 14px auto 0;
+    margin: 0 auto 16px;
     padding: 8px 12px;
     text-align: center;
     color: var(--muted);
