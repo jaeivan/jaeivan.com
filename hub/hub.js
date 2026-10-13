@@ -24,6 +24,7 @@
     const badges = [];
     if (withinWeek(app.created)) badges.push("New");
     if (withinWeek(app.updated)) badges.push("Updated");
+    if (overAYearAgo(app.updated || app.created)) badges.push("Old");
     if (badges.length) {
       const wrap = document.createElement("span");
       wrap.className = "tile-badges";
@@ -147,6 +148,13 @@
     if (!date) return false;
     const age = Date.now() - parseDate(date);
     return age >= 0 && age < 7 * 24 * 60 * 60 * 1000;
+  }
+  function overAYearAgo(date) {
+    if (!date) return false;
+    const yearAgo = new Date();
+    yearAgo.setHours(0, 0, 0, 0);
+    yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+    return parseDate(date) < yearAgo;
   }
   function formatDate(date) {
     return parseDate(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });

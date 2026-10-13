@@ -30,7 +30,7 @@ The top-right button cycles **Auto → Light → Dark**. Auto follows the device
 ## Adding an app
 
 1. Copy `_template/` to `<slug>/` and build there, using relative paths only.
-2. Add an entry with the same `slug` to `hub/apps.js`, including `created` and `updated` dates. Bump `updated` whenever you change the app; tiles show a "New" or "Updated" badge for a week.
+2. Add an entry with the same `slug` to `hub/apps.js`, including `created` and `updated` dates. Bump `updated` whenever you change the app; tiles show a "New" or "Updated" badge for a week, and "Old" after a year without updates.
 
 It goes live at `jaeivan.com/<slug>/`.
 
