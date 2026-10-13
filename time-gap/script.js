@@ -14,17 +14,18 @@
         CATS[c.id] = c;
         var btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "cat" + (c.universe ? " cat-universe" : "");
+        btn.className = "cat" + (c.special ? " cat-special" : "");
         btn.dataset.cat = c.id;
         btn.setAttribute("aria-pressed", "false");
         btn.textContent = c.emoji + " " + c.label;
-        document.getElementById(c.universe ? "universes" : "cats").appendChild(btn);
+        document.getElementById(c.special ? "special" : "cats").appendChild(btn);
     });
     var catButtons = document.querySelectorAll(".cat");
-    var realCount = window.TIME_GAP_CATEGORIES.filter(function (c) { return !c.universe; }).length;
+    var realCount = window.TIME_GAP_CATEGORIES.filter(function (c) { return !c.special; }).length;
 
-    // Random means every real-world event; fictional universes are only played on their own.
-    var REAL = EVENTS.filter(function (e) { return !CATS[e.cat].universe; });
+    // Random means every regular event; special categories are only played on their own.
+    var REAL = EVENTS.filter(function (e) { return !CATS[e.cat].special; });
+    var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     var streak = 0;
     var best = loadBest();
@@ -34,20 +35,27 @@
     var cats = []; // chosen categories; empty means Random (every real-world category)
     var pool = REAL;
 
-    // Real years have no year 0, so 1 BC is followed directly by AD 1.
-    // Fictional calendars count straight through.
-    function astro(e) {
-        return e.year < 0 && !CATS[e.cat].universe ? e.year + 1 : e.year;
+    function monthly(e) {
+        return CATS[e.cat].dates === "month";
+    }
+
+    // An event's place on the timeline: in months for month-dated categories, else years.
+    // Real years have no year 0, so 1 BC is followed directly by AD 1; the fictional
+    // calendars (and BC-free month dates) count straight through.
+    function pos(e) {
+        if (monthly(e)) return e.year * 12 + e.month - 1;
+        return e.year < 0 && !CATS[e.cat].dates ? e.year + 1 : e.year;
     }
 
     function gapOf(a, b) {
-        return Math.abs(astro(a) - astro(b));
+        return Math.abs(pos(a) - pos(b));
     }
 
-    // How far off an "approx" date might be, so a round never hinges on it.
+    // How far off an "approx" date might be (in the same units as pos), so a round never hinges on it.
     function fuzz(e) {
         if (!e.approx) return 0;
         if (e.fuzz !== undefined) return e.fuzz;
+        if (monthly(e)) return 2;
         return e.year < 0 ? 100 : 25;
     }
 
@@ -111,6 +119,8 @@
             // 40999 → 999.M41; rough dates only give the millennium
             var m = "M" + (Math.floor(e.year / 1000) + 1);
             y = e.approx ? m : String(e.year % 1000).padStart(3, "0") + "." + m;
+        } else if (dates === "month") {
+            y = MONTHS[e.month - 1] + " " + e.year;
         } else if (dates === "yavin") {
             y = e.year > 0 ? e.year.toLocaleString("en-US") + " ABY" : (-e.year).toLocaleString("en-US") + " BBY";
         } else {
@@ -119,9 +129,21 @@
         return (e.approx ? "c. " : "") + y;
     }
 
+    function plural(n, unit) {
+        return n.toLocaleString("en-US") + " " + unit + (n === 1 ? "" : "s");
+    }
+
+    // A gap in years, or in months for month-dated categories: "4 years, 2 months".
+    function span(n, inMonths) {
+        if (!inMonths) return plural(n, "year");
+        var y = Math.floor(n / 12), m = n % 12;
+        if (!y) return plural(m, "month");
+        return plural(y, "year") + (m ? ", " + plural(m, "month") : "");
+    }
+
     function formatGap(q) {
         var about = q.a.approx || q.b.approx ? "about " : "";
-        return about + q.gap.toLocaleString("en-US") + (q.gap === 1 ? " year" : " years") + " apart";
+        return about + span(q.gap, monthly(q.a)) + " apart";
     }
 
     function eventHtml(e) {
@@ -176,16 +198,16 @@
             });
         });
 
-        var diff = Math.abs(round[0].gap - round[1].gap).toLocaleString("en-US");
+        var diff = span(Math.abs(round[0].gap - round[1].gap), monthly(round[0].a));
         if (right) {
             streak++;
             if (streak > best) { best = streak; saveBest(best); }
-            resultEl.textContent = "Correct! Pair " + (closer ? "B" : "A") + " is " + diff + " years closer.";
+            resultEl.textContent = "Correct! Pair " + (closer ? "B" : "A") + " is " + diff + " closer.";
             resultEl.classList.add("is-right");
             nextBtn.textContent = "Next";
         } else {
             resultEl.textContent = "Not quite. Pair " + (closer ? "B" : "A") + " is " + diff +
-                " years closer." +
+                " closer." +
                 (streak ? " Your streak was " + streak + "." : "");
             resultEl.classList.add("is-wrong");
             streak = 0;
@@ -230,10 +252,10 @@
             cats = [];
         } else if (cats.indexOf(cat) !== -1) {
             cats = cats.filter(function (c) { return c !== cat; });
-        } else if (CATS[cat].universe) {
-            cats = [cat]; // a universe is played on its own
+        } else if (CATS[cat].special) {
+            cats = [cat]; // special categories are played on their own
         } else {
-            cats = cats.filter(function (c) { return !CATS[c].universe; }).concat(cat);
+            cats = cats.filter(function (c) { return !CATS[c].special; }).concat(cat);
         }
         // Every real-world category picked is the same as Random.
         if (cats.length === realCount) cats = [];
@@ -243,9 +265,9 @@
             btn.setAttribute("aria-pressed", String(c === "random" ? !cats.length : cats.indexOf(c) !== -1));
         });
         pool = cats.length ? EVENTS.filter(function (e) { return cats.indexOf(e.cat) !== -1; }) : REAL;
-        var universe = cats.length === 1 && CATS[cats[0]].universe ? CATS[cats[0]] : null;
-        noteEl.hidden = !universe;
-        noteEl.textContent = universe ? universe.note : "";
+        var special = cats.length === 1 && CATS[cats[0]].special ? CATS[cats[0]] : null;
+        noteEl.hidden = !(special && special.note);
+        noteEl.textContent = special && special.note ? special.note : "";
         recent = [];
 
         // A new set of events starts a fresh streak.
