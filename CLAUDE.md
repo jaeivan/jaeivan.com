@@ -17,7 +17,7 @@ GitHub Pages publishes `main` to jaeivan.com, so anything merged into `main` goe
 ## Rules
 
 - Apps must stay fully independent: never import another app's files, and never change `hub/` or `shared/` for one app's needs.
-- Use relative paths only (`../shared/...`, `script.js`). Never use root-absolute `/...` paths.
+- Use relative paths only (`../shared/...`, `script.js`). Never use root-absolute `/...` paths. The one exception is `404.html` (plus its `404.gif`, drawn by `_tools/lost.mjs`): GitHub Pages serves it at any missing path, so it links to `/` and `/shared/...`.
 - Anything added to `shared/` must use a class prefix so its styles can't leak into apps.
 - Every app must work at phone width (375px) with no horizontal scroll.
 - Interactive elements must work with a keyboard: use real buttons, or add `tabindex`, `role` and Enter/Space handling.

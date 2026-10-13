@@ -6,6 +6,7 @@ A hub of small, independent web apps. Plain static HTML/CSS/JS, served by GitHub
 
 ```
 index.html       Hub home page (grid of app tiles)
+404.html         "Page not found" page with a lost ghost (404.gif)
 hub/             App registry (apps.js), tile rendering and hub styles
 shared/          hub-nav.css ("← All apps" button) and theme.js/.css (light/dark mode, used by every page)
 _template/       Starter files for a new app (ignored by GitHub Pages)
