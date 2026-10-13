@@ -1,6 +1,21 @@
+/* Colors as tokens so dark mode (shared/theme.js) only has to swap values. */
+:root {
+    --bg: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+}
+
+:root[data-theme="dark"] {
+    --bg: #15161a;
+    --text: #e7e9ee;
+    --muted: #9aa0ab;
+}
+
 body {
     margin: 0;
     font-family: system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
 }
 
 main {

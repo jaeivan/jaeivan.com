@@ -11,7 +11,7 @@
 
     const art = document.createElement("div");
     art.className = "tile-art";
-    art.style.background = app.color || "#eef2ff";
+    if (app.color) art.style.setProperty("--tile-color", app.color);
     if (app.thumbnail) {
       const img = document.createElement("img");
       img.src = href + app.thumbnail;
@@ -24,10 +24,7 @@
     const title = document.createElement("h2");
     title.textContent = app.title;
 
-    const desc = document.createElement("p");
-    desc.textContent = app.description || "";
-
-    tile.append(art, title, desc);
+    tile.append(art, title);
     grid.append(tile);
   });
 })();
