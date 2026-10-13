@@ -4,8 +4,8 @@
 //
 // Writes pokopia-doku/ditto.gif (title, tight), ditto-still.gif (title at rest, shown until
 // hovered or tapped), tile.gif (hub tile, 4:3 with padding) and tile-still.gif (hub tile at
-// rest, animated on hover), favicon.gif (browser tab, square) and icon.png (180×180 home-screen
-// icon on the tile color).
+// rest, animated on hover), favicon.gif (browser tab, square), icon.png (180×180 home-screen
+// icon on the tile color) and og.png (1200×630 link-preview card).
 // Edit MAP / DANCE below to change the art or the moves. The GIF encoder is shared: _tools/pixel-gif.mjs.
 
 import path from "node:path";
@@ -103,3 +103,58 @@ const icon = writePixelPng(path.join(OUT, "icon.png"), {
     scale: 5,
 });
 console.log(`wrote icon.png (${icon.width}×${icon.height}, ${(icon.bytes / 1024).toFixed(1)} KB)`);
+
+// Link-preview card (og.png): the title over Ditto next to a finished 3×3 board.
+// 200×105 art px at 6× = 1200×630.
+const FONT = {
+    P: ["####.", "#...#", "#...#", "####.", "#....", "#....", "#...."],
+    O: [".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+    K: ["#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"],
+    I: ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "#####"],
+    A: [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+    D: ["####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####."],
+    U: ["#...#", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+    " ": ["..", "..", "..", "..", "..", "..", ".."],
+};
+const MARKS = { // 6×6, drawn in white on the solved (✅) and missed (❌) squares
+    Y: ["......", ".....#", "....#.", "#..#..", ".##...", "......"],
+    N: ["#....#", ".#..#.", "..##..", "..##..", ".#..#.", "#....#"],
+};
+const OG_W = 200, OG_H = 105;
+const card = Array.from({ length: OG_H }, () => Array(OG_W).fill("."));
+const stamp = (art, x0, y0, cell, ch) => art.forEach((row, y) => [...row].forEach((c, x) => {
+    if (c === ".") return;
+    for (let v = 0; v < cell; v++) for (let u = 0; u < cell; u++) card[y0 + y * cell + v][x0 + x * cell + u] = ch ?? c;
+}));
+
+const TITLE = "POKOPIA DOKU", TCELL = 2, TTOP = 10;
+const titleW = [...TITLE].reduce((w, ch) => w + (FONT[ch][0].length + 1) * TCELL, -TCELL);
+let tx = Math.floor((OG_W - titleW) / 2);
+for (const ch of TITLE) {
+    stamp(FONT[ch], tx + 1, TTOP + 1, TCELL, "t"); // drop shadow
+    stamp(FONT[ch], tx, TTOP, TCELL, "T");
+    tx += (FONT[ch][0].length + 1) * TCELL;
+}
+
+// Ditto (3× art px) beside a board; squares are 18 art px with a 3 px gap.
+const BOARD = ["YYN", "Y.Y", "NYY"], SQ = 18, GAP = 3;
+const boardW = 3 * SQ + 2 * GAP, dittoW = CW * 3, spread = 12;
+const left = Math.floor((OG_W - dittoW - spread - boardW) / 2), top = 34;
+stamp(frames[0].grid, left, top + boardW - CH * 3, 3); // feet level with the board bottom
+BOARD.forEach((row, r) => [...row].forEach((mark, c) => {
+    const x0 = left + dittoW + spread + c * (SQ + GAP), y0 = top + r * (SQ + GAP);
+    const fill = { Y: "G", N: "R", ".": "E" }[mark];
+    for (let y = 0; y < SQ; y++) for (let x = 0; x < SQ; x++) {
+        const edge = x === 0 || y === 0 || x === SQ - 1 || y === SQ - 1;
+        card[y0 + y][x0 + x] = edge ? "o" : fill;
+    }
+    if (MARKS[mark]) stamp(MARKS[mark], x0 + 3, y0 + 3, 2, "W");
+}));
+
+const og = writePixelPng(path.join(OUT, "og.png"), {
+    grid: card,
+    colors: { ...COLORS, T: "#5e3f7d", t: "#c39ae0", G: "#4caf6a", R: "#e5484d", E: "#f7f4fb", W: "#ffffff" },
+    background: "#EBE1F6",
+    scale: 6,
+});
+console.log(`wrote og.png (${og.width}×${og.height}, ${(og.bytes / 1024).toFixed(1)} KB)`);
