@@ -146,9 +146,33 @@
         return about + span(q.gap, monthly(q.a)) + " apart";
     }
 
+    // Video events show their YouTube thumbnail; the emoji rides along as the fallback.
+    function iconHtml(e) {
+        if (!e.yt) return '<span class="emoji" aria-hidden="true">' + e.emoji + "</span>";
+        return '<span class="emoji thumb" aria-hidden="true" data-emoji="' + e.emoji + '">' +
+            '<img src="https://i.ytimg.com/vi/' + e.yt + '/mqdefault.jpg" alt="" width="96" height="54"></span>';
+    }
+
+    // YouTube answers a missing video with a 120×90 grey placeholder instead of an error.
+    function watchThumbs(root) {
+        root.querySelectorAll(".thumb img").forEach(function (img) {
+            function fallback() {
+                var box = img.parentNode;
+                if (!box) return;
+                box.classList.remove("thumb");
+                box.textContent = box.dataset.emoji;
+            }
+            function check() {
+                if (img.naturalWidth <= 120) fallback();
+            }
+            img.addEventListener("error", fallback);
+            if (img.complete) check(); else img.addEventListener("load", check);
+        });
+    }
+
     function eventHtml(e) {
         return '<span class="event">' +
-            '<span class="emoji" aria-hidden="true">' + e.emoji + "</span>" +
+            iconHtml(e) +
             '<span class="event-text">' + e.label +
             '<span class="year">' + formatYear(e) + "</span></span>" +
             "</span>";
@@ -164,7 +188,8 @@
         var longest = Math.max(round[0].gap, round[1].gap);
         buttons.forEach(function (btn, i) {
             var q = round[i];
-            btn.className = "pair";
+            // Thumbnails are wider than emoji, so a pair with any uses wide icon boxes.
+            btn.className = "pair" + (q.a.yt || q.b.yt ? " has-thumbs" : "");
             btn.disabled = false;
             btn.setAttribute("aria-label", "Pair " + (i ? "B" : "A") + ": " + q.a.label + ", and " + q.b.label);
             btn.innerHTML =
@@ -175,6 +200,7 @@
                 '<span class="gap"><span class="gap-bar"><span class="gap-fill" data-w="' +
                 Math.max(2, (q.gap / longest) * 100) + '"></span></span>' +
                 '<span class="gap-text">' + formatGap(q) + "</span></span>";
+            watchThumbs(btn);
         });
     }
 
