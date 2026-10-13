@@ -44,6 +44,26 @@ body {
     font-size: 2.4rem;
     font-weight: 800;
     letter-spacing: -.02em;
+    line-height: 0;
+}
+
+/* WordArt logo, drawn by _tools/logo.mjs. Waves and spins on hover, toggles on click/tap (hub.js). */
+.hub-logo-wrap {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.hub-logo-wrap:focus-visible {
+    outline: 2px solid var(--muted);
+    outline-offset: 4px;
+}
+
+.hub-logo {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    image-rendering: pixelated;
 }
 
 .hub-header p {
@@ -86,6 +106,38 @@ body {
     background: color-mix(in srgb, var(--tile-color, #eef2ff) var(--tile-mix), var(--card));
     font-size: 4rem;
     overflow: hidden;
+    position: relative;
+}
+
+/* "New" / "Updated" badges for apps created or changed in the last 7 days (`created` / `updated` in apps.js) */
+.tile-badges {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.tile-badge {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #ff71ce;
+    color: #ffffff;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+}
+
+.tile-badge-updated {
+    background: #01cdfe;
+    color: #1a0b2e;
+}
+
+.tile-badge-old {
+    background: #8a8f99;
+    color: #ffffff;
 }
 
 .tile-art img {
@@ -100,9 +152,55 @@ body {
     text-align: center;
 }
 
+.tile-dates {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 4px 4px 0;
+    color: var(--muted);
+    font-size: .75rem;
+}
+
 .hub-footer {
     margin-top: 56px;
     text-align: center;
     color: var(--muted);
     font-size: .8rem;
+}
+
+.hub-footer p {
+    margin: 12px 0 0;
+}
+
+.hub-footer .hub-footer-disclaimer {
+    max-width: 420px;
+    margin: 8px auto 0;
+    font-size: .7rem;
+    line-height: 1.5;
+    opacity: .8;
+}
+
+.hub-footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-size: .9rem;
+}
+
+.hub-footer-links a,
+.hub-footer p a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .15s;
+}
+
+.hub-footer-links a:hover,
+.hub-footer-links a:focus-visible,
+.hub-footer p a:hover,
+.hub-footer p a:focus-visible {
+    color: var(--text);
 }
