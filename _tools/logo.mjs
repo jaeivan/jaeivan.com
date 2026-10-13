@@ -1,4 +1,4 @@
-// Draws the spinning WordArt-style "jaeivan" logo, early-internet style. Not served (underscore folder).
+// Draws the spinning WordArt-style "jaeivan" logo in vaporwave colors. Not served (underscore folder).
 //
 //   node _tools/logo.mjs
 //
@@ -13,17 +13,17 @@ import { writePixelGif, writePixelPng } from "./pixel-gif.mjs";
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const COLORS = {
-    o: "#1a1b26", // outline
-    r: "#ff4d6d", // rainbow face, top to bottom
-    n: "#ff9e3d",
-    y: "#ffe14d",
-    g: "#4ddc7a",
-    b: "#4dabff",
-    p: "#b07cff",
-    S: "#6b6f9e", // extruded sides, lit
-    s: "#3f4270", // extruded sides, shaded
+    o: "#1a0b2e", // outline
+    c: "#01cdfe", // face gradient, top to bottom: cyan → periwinkle → purple → hot pink
+    l: "#5fb4ff",
+    v: "#8f8cff",
+    p: "#b967ff",
+    m: "#e46ee6",
+    k: "#ff71ce",
+    S: "#5b2a86", // extruded sides, lit
+    s: "#34185a", // extruded sides, shaded
 };
-const RAINBOW = ["r", "n", "y", "g", "b", "p"];
+const GRADIENT = ["c", "l", "v", "p", "m", "k"];
 
 // 5-wide lowercase glyphs on a 10-row grid: dots on row 0, x-height rows 2–7, descender rows 8–9.
 const GLYPHS = {
@@ -44,7 +44,7 @@ function bitmap(text) {
 
 // Render one frame of `font` extruded `depth` art pixels deep, spun `angle` radians around its
 // vertical axis. Each font pixel is `cell` art pixels. A z-buffer per art pixel picks whatever
-// is nearest the viewer: the rainbow front/back faces or the shaded sides.
+// is nearest the viewer: the gradient front/back faces or the shaded sides.
 function spinFrame(font, { cell, depth, width, height, angle }) {
     const grid = Array.from({ length: height }, () => Array(width).fill("."));
     const zbuf = Array.from({ length: height }, () => Array(width).fill(-Infinity));
@@ -55,7 +55,7 @@ function spinFrame(font, { cell, depth, width, height, angle }) {
     const side = sin > 0 ? "S" : "s";
 
     font.forEach((row, fy) => {
-        const face = RAINBOW[Math.floor((fy / font.length) * RAINBOW.length)];
+        const face = GRADIENT[Math.floor((fy / font.length) * GRADIENT.length)];
         [...row].forEach((c, fx) => {
             if (c !== "#") return;
             for (let u = 0; u < cell; u += step) {
@@ -110,12 +110,24 @@ console.log("favicon.gif", writePixelGif(path.join(ROOT, "favicon.gif"), {
     scale: 2,
 }));
 
-// Link-preview card: the face-on logo over a pixel starfield, 200×105 art px at 6× = 1200×630.
-const OG_W = 200, OG_H = 105;
+// Link-preview card: the face-on logo over a starry sky and a neon grid floor running off to the
+// horizon. 200×105 art px at 6× = 1200×630.
+const OG_W = 200, OG_H = 105, HORIZON = 80;
 const card = Array.from({ length: OG_H }, () => Array(OG_W).fill("."));
 let seed = 7;
 const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-for (let i = 0; i < 140; i++) card[Math.floor(rand() * OG_H)][Math.floor(rand() * OG_W)] = rand() < 0.3 ? "*" : "+";
+for (let i = 0; i < 110; i++) card[Math.floor(rand() * HORIZON)][Math.floor(rand() * OG_W)] = rand() < 0.5 ? "*" : "+";
+for (let x = 0; x < OG_W; x++) card[HORIZON][x] = "#";
+for (let i = 1; i < 8; i++) { // floor lines, bunching up toward the horizon
+    const y = HORIZON + Math.round(((OG_H - HORIZON) * i * i) / 49);
+    if (y < OG_H) for (let x = 0; x < OG_W; x++) card[y][x] = "=";
+}
+for (let k = -5; k <= 5; k++) { // rails converging on the vanishing point
+    for (let t = 0; t <= 1; t += 0.002) {
+        const x = Math.round(OG_W / 2 + k * 26 * t), y = Math.round(HORIZON + (OG_H - 1 - HORIZON) * t);
+        if (x >= 0 && x < OG_W && y > HORIZON) card[y][x] = "=";
+    }
+}
 const big = spinFrame(word, { cell: 4, depth: 8, width: 170, height: 44, angle: 0 });
 const lx = (OG_W - 170) / 2, ly = Math.floor((OG_H - 44) / 2);
 big.forEach((row, y) => row.forEach((c, x) => {
@@ -123,7 +135,7 @@ big.forEach((row, y) => row.forEach((c, x) => {
 }));
 console.log("og.png", writePixelPng(path.join(ROOT, "og.png"), {
     grid: card,
-    colors: { ...COLORS, "*": "#ffffff", "+": "#5a5e78" },
-    background: "#15161a",
+    colors: { ...COLORS, "*": "#01cdfe", "+": "#ff71ce", "#": "#ff71ce", "=": "#9b3fb5" },
+    background: "#1b0b33",
     scale: 6,
 }));
