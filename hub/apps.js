@@ -39,4 +39,13 @@ window.HUB_APPS = [
     created: "2026-10-12",
     updated: "2026-10-13",
   },
+  {
+    slug: "time-gap",
+    title: "Time Gap",
+    description: "Which two moments in history are closer together?",
+    emoji: "⏳",
+    color: "#DDF0E4",
+    created: "2026-10-13",
+    updated: "2026-10-13",
+  },
 ];
