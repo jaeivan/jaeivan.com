@@ -46,7 +46,8 @@
       const span = document.createElement("span");
       const time = document.createElement("time");
       time.dateTime = date;
-      time.textContent = formatDate(date);
+      time.textContent = relativeDate(date);
+      time.title = formatDate(date);
       span.append(`${label} `, time);
       dates.append(span);
     });
@@ -149,5 +150,18 @@
   }
   function formatDate(date) {
     return parseDate(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  // "today", "yesterday", "3 days ago", "2 weeks ago", "1 month ago"; from 2 months on, the date.
+  function relativeDate(date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const days = Math.round((today - parseDate(date)) / (24 * 60 * 60 * 1000)); // round: DST days aren't 24h
+    const ago = (n, unit) => `${n} ${unit}${n === 1 ? "" : "s"} ago`;
+    if (days < 0 || days >= 60) return formatDate(date);
+    if (days === 0) return "today";
+    if (days === 1) return "yesterday";
+    if (days < 7) return ago(days, "day");
+    if (days < 30) return ago(Math.floor(days / 7), "week");
+    return ago(1, "month");
   }
 })();
