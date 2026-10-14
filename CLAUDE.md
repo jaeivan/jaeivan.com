@@ -8,6 +8,8 @@ No build step, no framework and no npm dependencies. Keep it that way.
 
 GitHub Pages publishes `main` to jaeivan.com, so anything merged into `main` goes live right away. IMPORTANT: never push to `main` directly. Every change goes through a PR from its own branch, with one app or feature per branch.
 
+Don't mention Claude, Claude Code or AI anywhere in commits, branch names, PR titles, PR descriptions or GitHub comments: no `Co-Authored-By` or `Claude-Session` lines, no "Generated with Claude Code" footers, no `claude/` branch prefix. `.claude/settings.json` turns the automatic attribution off and, at session start, sets the git author to jaeivan (GitHub noreply email); this rule covers the rest.
+
 ## Adding an app
 
 1. Copy `_template/` to `<slug>/` (lowercase, hyphenated).

@@ -1,0 +1,19 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -C \"$CLAUDE_PROJECT_DIR\" config user.name 'Jaeivan R.' && git -C \"$CLAUDE_PROJECT_DIR\" config user.email '44349654+jaeivan@users.noreply.github.com'"
+          }
+        ]
+      }
+    ]
+  }
+}
