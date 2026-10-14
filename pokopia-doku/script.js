@@ -38,7 +38,8 @@ const DIFFICULTY_PREF_KEY = "pokopia-doku:difficulty";
 // `ratings(rng)` returns the difficulty rating (1 easy – 3 hard) for each of the 6 headers.
 // Cells must have between minCell and maxCell valid answers.
 // guesses: null = unlimited. hints: how many per grid (Infinity = free). hintCostsGuess: Hard.
-// browse: listing a header's Pokémon in the picker, which uses a hint. "button" = its own option,
+// browse: listing a header's Pokémon in the picker. Unlocking a header (row or column) uses a hint
+// and lets every square along it browse that header. "button" = its own option,
 // "hint" = offered as a kind of hint, false = not available.
 
 const DIFFICULTIES = {
@@ -435,7 +436,7 @@ function loadDaily(date) {
     }
 }
 
-const SAVED_FIELDS = ["cells", "missed", "guessesLeft", "gaveUp", "hintsUsed", "hintTiers", "hintTargets", "browseUnlocked"];
+const SAVED_FIELDS = ["cells", "missed", "guessesLeft", "gaveUp", "hintsUsed", "hintTiers", "hintTargets", "browseHeaders"];
 
 // Identifies a grid by its six headers. Saved progress only applies to the exact grid it was
 // played on, so a data/theme update that changes the day's grid can't misplace old answers.
@@ -493,7 +494,7 @@ const state = {
     hintsUsed: 0,
     hintTiers: Array(9).fill(0),
     hintTargets: Array(9).fill(null),
-    browseUnlocked: Array(9).fill(false),
+    browseHeaders: Array(6).fill(false), // rows 0–2, then columns 3–5
     activeCell: null,
     browseFilter: null, // "row" | "col" | null
 };
@@ -509,7 +510,16 @@ function resetProgress(saved = {}) {
     state.hintsUsed = saved.hintsUsed ?? 0;
     state.hintTiers = saved.hintTiers ?? Array(9).fill(0);
     state.hintTargets = saved.hintTargets ?? Array(9).fill(null);
-    state.browseUnlocked = saved.browseUnlocked ?? Array(9).fill(false);
+    state.browseHeaders = saved.browseHeaders ?? browseHeadersFromSquares(saved.browseUnlocked);
+}
+
+// Older saves unlocked browsing per square, for both of its headers. Keep those headers unlocked.
+function browseHeadersFromSquares(unlocked = []) {
+    const headers = Array(6).fill(false);
+    unlocked.forEach((on, i) => {
+        if (on) headers[rowHeader(i)] = headers[colHeader(i)] = true;
+    });
+    return headers;
 }
 
 function startDaily() {
@@ -588,6 +598,10 @@ const filledCount = () => state.cells.filter(Boolean).length;
 const isOver = () => state.gaveUp || filledCount() === 9 || state.guessesLeft === 0;
 const rowOf = (i) => state.grid.rows[Math.floor(i / 3)];
 const colOf = (i) => state.grid.cols[i % 3];
+const rowHeader = (i) => Math.floor(i / 3);
+const colHeader = (i) => 3 + (i % 3);
+const browseHeaderOf = (i, side) => (side === "row" ? rowHeader(i) : colHeader(i));
+const canBrowse = (i, side) => state.browseHeaders[browseHeaderOf(i, side)];
 const isThemeCell = (i) => rowOf(i).isTheme || colOf(i).isTheme;
 
 // One valid, unused answer per empty cell (for the end-of-game reveal).
@@ -649,13 +663,19 @@ function useHint() {
     renderPicker();
 }
 
-function unlockBrowse() {
+// Browsing a header: unlocks it (using a hint) the first time, then toggles the filter.
+function browse(side) {
     const i = state.activeCell;
-    if (!cfg().browse || state.browseUnlocked[i] || !spendHint()) return;
-    state.browseUnlocked[i] = true;
-    state.browseFilter = "row";
-    saveDaily();
-    render();
+    if (!cfg().browse) return;
+    if (!canBrowse(i, side)) {
+        if (!spendHint()) return;
+        state.browseHeaders[browseHeaderOf(i, side)] = true;
+        state.browseFilter = side;
+        saveDaily();
+        render();
+    } else {
+        state.browseFilter = state.browseFilter === side ? null : side;
+    }
     renderPicker();
 }
 
@@ -853,7 +873,7 @@ function render() {
                     count.textContent = `${state.grid.cellAnswers[i].length} fit`;
                     btn.append(count);
                 }
-                if (state.hintTiers[i] || state.browseUnlocked[i]) {
+                if (state.hintTiers[i] || canBrowse(i, "row") || canBrowse(i, "col")) {
                     const bulb = document.createElement("span");
                     bulb.className = "bulb";
                     bulb.textContent = "💡";
@@ -936,7 +956,9 @@ let activeResult = 0;
 
 function openPicker(index) {
     state.activeCell = index;
-    state.browseFilter = state.browseUnlocked[index] ? state.browseFilter || "row" : null;
+    if (!state.browseFilter || !canBrowse(index, state.browseFilter)) {
+        state.browseFilter = ["row", "col"].find((side) => canBrowse(index, side)) ?? null;
+    }
     $("pickerTitle").textContent = `${rowOf(index).label} × ${colOf(index).label}`;
     $("pickerInput").value = "";
     renderPicker();
@@ -958,10 +980,6 @@ function renderPicker() {
     const hintBtn = $("hintBtn");
     hintBtn.disabled = over || tier >= HINT_TIERS || hintsLeft() <= 0;
     hintBtn.textContent = tier >= HINT_TIERS ? "💡 No more hints" : `💡 Hint (${tier + 1}/${HINT_TIERS})`;
-    const browseBtn = $("browseBtn");
-    browseBtn.hidden = !cfg().browse || state.browseUnlocked[i];
-    browseBtn.textContent = cfg().browse === "hint" ? "💡 Hint: browse options" : "🔍 Browse options";
-    browseBtn.disabled = over || hintsLeft() <= 0;
     $("hintCost").textContent = hintCostText();
 
     const clues = $("hintClues");
@@ -980,20 +998,25 @@ function renderPicker() {
         clues.append(li);
     });
 
-    const tabs = $("browseTabs");
-    tabs.hidden = !state.browseUnlocked[i];
-    if (state.browseUnlocked[i]) {
-        $("browseRow").textContent = `Browse: ${rowOf(i).label}`;
-        $("browseCol").textContent = `Browse: ${colOf(i).label}`;
-        $("browseRow").classList.toggle("active", state.browseFilter === "row");
-        $("browseCol").classList.toggle("active", state.browseFilter === "col");
-    }
+    // One chip per header. A locked chip unlocks that header for its whole row or column.
+    $("browseTabs").hidden = !cfg().browse;
+    [["row", "browseRow", rowOf(i), "row"], ["col", "browseCol", colOf(i), "column"]].forEach(([side, id, header, line]) => {
+        const chip = $(id);
+        const open = canBrowse(i, side);
+        const lockIcon = cfg().browse === "hint" ? "💡" : "🔍";
+        chip.textContent = open ? `Browse: ${header.label}` : `${lockIcon} Browse: ${header.label}`;
+        chip.classList.toggle("locked", !open);
+        chip.classList.toggle("active", open && state.browseFilter === side);
+        chip.disabled = !open && (over || hintsLeft() <= 0);
+        chip.setAttribute("aria-pressed", String(open && state.browseFilter === side));
+        chip.title = open ? "" : `Uses a hint. Unlocks browsing ${header.label} in this whole ${line}.`;
+    });
     renderResults();
 }
 
 function currentFilter() {
     const i = state.activeCell;
-    if (i === null || !state.browseUnlocked[i] || !state.browseFilter) return null;
+    if (i === null || !state.browseFilter || !canBrowse(i, state.browseFilter)) return null;
     return state.browseFilter === "row" ? rowOf(i) : colOf(i);
 }
 
@@ -1088,15 +1111,8 @@ $("picker").addEventListener("click", (e) => {
     if (e.target === $("picker")) closePicker();
 });
 $("hintBtn").addEventListener("click", useHint);
-$("browseBtn").addEventListener("click", unlockBrowse);
-$("browseRow").addEventListener("click", () => {
-    state.browseFilter = state.browseFilter === "row" ? null : "row";
-    renderPicker();
-});
-$("browseCol").addEventListener("click", () => {
-    state.browseFilter = state.browseFilter === "col" ? null : "col";
-    renderPicker();
-});
+$("browseRow").addEventListener("click", () => browse("row"));
+$("browseCol").addEventListener("click", () => browse("col"));
 $("explainClose").addEventListener("click", closeExplain);
 $("explain").addEventListener("click", (e) => {
     if (e.target === $("explain")) closeExplain();
