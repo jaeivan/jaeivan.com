@@ -36,6 +36,17 @@ html {
     touch-action: manipulation;
 }
 
+/* Quick repeated taps shouldn't select text or pop up the iOS callout */
+.pairs,
+.result,
+.next,
+.cats,
+.scores {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
 body {
     margin: 0;
     font-family: system-ui, sans-serif;
@@ -117,8 +128,11 @@ h1 {
     transition: border-color 0.15s, background-color 0.15s;
 }
 
-.cat:hover {
-    border-color: var(--accent);
+/* Hover styles only for real pointers: on touch screens :hover sticks to the last thing tapped */
+@media (hover: hover) {
+    .cat:hover {
+        border-color: var(--accent);
+    }
 }
 
 .cat[aria-pressed="true"] {
@@ -233,9 +247,11 @@ h1 {
     height: 6px;
 }
 
-.pair:not(:disabled):hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
+@media (hover: hover) {
+    .pair:not(:disabled):hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+    }
 }
 
 .pair:focus-visible,

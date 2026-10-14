@@ -31,6 +31,7 @@
     var best = loadBest();
     var round = null; // [{ a, b, gap }, { a, b, gap }]
     var answered = false;
+    var nextAt = -Infinity; // when Next was last pressed, so a stray repeat tap or keypress can't answer
     var recent = []; // events shown lately, so they don't repeat every round
     var cats = []; // chosen categories; empty means Random (every real-world category)
     var pool = REAL;
@@ -207,7 +208,9 @@
     }
 
     function answer(i) {
-        if (answered) return;
+        // Focus lands on Pair A after Next, so a double press of Enter or a double tap on Next
+        // would otherwise answer the new round before it's even been read.
+        if (answered || performance.now() - nextAt < 300) return;
         answered = true;
 
         var closer = round[0].gap < round[1].gap ? 0 : 1;
@@ -246,11 +249,23 @@
         nextBtn.focus({ preventScroll: true });
         // On phones Next can sit below the screen: scroll just enough to show it, if needed,
         // once the revealed years have finished growing the cards (0.3s, see styles.css).
+        // If they start scrolling themselves meanwhile, leave the page where they put it.
         var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        setTimeout(function () {
+        var timer = setTimeout(function () {
+            stopListening();
             if (!answered) return; // already moved on to the next round
             nextBtn.scrollIntoView({ block: "nearest", behavior: still ? "auto" : "smooth" });
         }, still ? 0 : 320);
+        function userScrolled() {
+            clearTimeout(timer);
+            stopListening();
+        }
+        function stopListening() {
+            window.removeEventListener("touchmove", userScrolled);
+            window.removeEventListener("wheel", userScrolled);
+        }
+        window.addEventListener("touchmove", userScrolled, { passive: true });
+        window.addEventListener("wheel", userScrolled, { passive: true });
     }
 
     function updateScores() {
@@ -332,7 +347,16 @@
 
     // The game area never shrinks between rounds (years and gaps hide again, labels get shorter),
     // so Next stays put and the picker can't slide up under a finger still tapping where Next was.
+    // Heights held for one width are wrong for another (a rotated phone puts the pairs side by side).
+    var heldWidth = window.innerWidth;
+    window.addEventListener("resize", function () {
+        if (window.innerWidth === heldWidth) return; // phones resize on scroll as the toolbar hides
+        heldWidth = window.innerWidth;
+        pairsEl.style.minHeight = mainEl.style.minHeight = "";
+    });
+
     nextBtn.addEventListener("click", function () {
+        nextAt = performance.now();
         mainEl.style.minHeight = "";
         pairsEl.style.minHeight = pairsEl.offsetHeight + "px";
         newRound();
