@@ -31,6 +31,7 @@
     var best = loadBest();
     var round = null; // [{ a, b, gap }, { a, b, gap }]
     var answered = false;
+    var nextAt = -Infinity; // when Next was last pressed, so a stray repeat tap or keypress can't answer
     var recent = []; // events shown lately, so they don't repeat every round
     var cats = []; // chosen categories; empty means Random (every real-world category)
     var pool = REAL;
@@ -207,7 +208,9 @@
     }
 
     function answer(i) {
-        if (answered) return;
+        // Focus lands on Pair A after Next, so a double press of Enter or a double tap on Next
+        // would otherwise answer the new round before it's even been read.
+        if (answered || performance.now() - nextAt < 300) return;
         answered = true;
 
         var closer = round[0].gap < round[1].gap ? 0 : 1;
@@ -243,7 +246,26 @@
         }
         updateScores();
         nextBtn.hidden = false;
-        nextBtn.focus();
+        nextBtn.focus({ preventScroll: true });
+        // On phones Next can sit below the screen: scroll just enough to show it, if needed,
+        // once the revealed years have finished growing the cards (0.3s, see styles.css).
+        // If they start scrolling themselves meanwhile, leave the page where they put it.
+        var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var timer = setTimeout(function () {
+            stopListening();
+            if (!answered) return; // already moved on to the next round
+            nextBtn.scrollIntoView({ block: "nearest", behavior: still ? "auto" : "smooth" });
+        }, still ? 0 : 320);
+        function userScrolled() {
+            clearTimeout(timer);
+            stopListening();
+        }
+        function stopListening() {
+            window.removeEventListener("touchmove", userScrolled);
+            window.removeEventListener("wheel", userScrolled);
+        }
+        window.addEventListener("touchmove", userScrolled, { passive: true });
+        window.addEventListener("wheel", userScrolled, { passive: true });
     }
 
     function updateScores() {
@@ -302,19 +324,43 @@
         streak = 0;
         updateScores();
         newRound();
-
-        // The picker sits below the game, so bring the new round into view.
-        var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        window.scrollTo({ top: 0, behavior: still ? "auto" : "smooth" });
     }
 
+    // The new round can be taller or shorter than the last one, which would shift the picker
+    // below it. Keep the tapped button put under the finger by scrolling by the shift. When the
+    // page is too short to scroll that far, hold some extra height until the next round.
+    var mainEl = document.querySelector("main");
     catButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () { setCategory(btn.dataset.cat); });
+        btn.addEventListener("click", function () {
+            var top = btn.getBoundingClientRect().top;
+            setCategory(btn.dataset.cat);
+            var shift = btn.getBoundingClientRect().top - top;
+            // Grew: make room below so the page can scroll down far enough.
+            var short = window.scrollY + window.innerHeight + shift - document.documentElement.scrollHeight;
+            if (shift > 0 && short > 0) mainEl.style.minHeight = mainEl.offsetHeight + short + "px";
+            window.scrollBy(0, shift);
+            // Shrank near the top: keep the game area tall instead.
+            var left = top - btn.getBoundingClientRect().top;
+            if (left > 0.5) pairsEl.style.minHeight = pairsEl.offsetHeight + left + "px";
+        });
+    });
+
+    // The game area never shrinks between rounds (years and gaps hide again, labels get shorter),
+    // so Next stays put and the picker can't slide up under a finger still tapping where Next was.
+    // Heights held for one width are wrong for another (a rotated phone puts the pairs side by side).
+    var heldWidth = window.innerWidth;
+    window.addEventListener("resize", function () {
+        if (window.innerWidth === heldWidth) return; // phones resize on scroll as the toolbar hides
+        heldWidth = window.innerWidth;
+        pairsEl.style.minHeight = mainEl.style.minHeight = "";
     });
 
     nextBtn.addEventListener("click", function () {
+        nextAt = performance.now();
+        mainEl.style.minHeight = "";
+        pairsEl.style.minHeight = pairsEl.offsetHeight + "px";
         newRound();
-        buttons[0].focus();
+        buttons[0].focus({ preventScroll: true });
     });
 
     // Title hourglass (decorative): runs its sand out and flips while hovered with a mouse; a tap,
