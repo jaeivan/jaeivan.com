@@ -246,26 +246,9 @@
         }
         updateScores();
         nextBtn.hidden = false;
+        // The page never scrolls by itself: on phones the game fills the screen with Next at the
+        // bottom (styles.css), so it's already in view.
         nextBtn.focus({ preventScroll: true });
-        // On phones Next can sit below the screen: scroll just enough to show it, if needed,
-        // once the revealed years have finished growing the cards (0.3s, see styles.css).
-        // If they start scrolling themselves meanwhile, leave the page where they put it.
-        var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        var timer = setTimeout(function () {
-            stopListening();
-            if (!answered) return; // already moved on to the next round
-            nextBtn.scrollIntoView({ block: "nearest", behavior: still ? "auto" : "smooth" });
-        }, still ? 0 : 320);
-        function userScrolled() {
-            clearTimeout(timer);
-            stopListening();
-        }
-        function stopListening() {
-            window.removeEventListener("touchmove", userScrolled);
-            window.removeEventListener("wheel", userScrolled);
-        }
-        window.addEventListener("touchmove", userScrolled, { passive: true });
-        window.addEventListener("wheel", userScrolled, { passive: true });
     }
 
     function updateScores() {
