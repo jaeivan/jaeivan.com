@@ -90,7 +90,7 @@ const SINGLE_GROUPS = new Set(["habitat", "flavor", "gen"]);
 
 const GROUP_RATINGS = {
     type: 1, dual: 1, evo: 1, status: 1,
-    gen: 2, specialty: 2, habitat: 2, multi: 2,
+    gen: 2, specialty: 2, habitat: 2, multi: 2, location: 2, spawn: 2, rarity: 2, time: 2,
     flavor: 3, favorite: 3,
 };
 const RATING_OVERRIDES = {
@@ -104,6 +104,7 @@ const RATING_OVERRIDES = {
     "favorite:Lots of fire": 2,
     "favorite:Lots of water": 2,
     "favorite:Lots of nature": 2,
+    "status:underwater": 2,
 };
 const SMALL_CATEGORY = 12;
 const SMALL_CATEGORY_CELLS = 15; // categories smaller than this get a lower per-square minimum
@@ -165,6 +166,20 @@ function buildCategories() {
     add("status", "Status", "starter", "Starter", "Any stage of a main-series starter Pokémon's evolution line (e.g. Bulbasaur, Ivysaur or Venusaur).", (p) => p.starter);
     add("status", "Status", "fossil", "Fossil", "Pokémon revived from fossils in the main series (e.g. Aerodactyl).", (p) => p.fossil);
     add("status", "Status", "baby", "Baby", "Pokémon officially classed as baby Pokémon in the main series (e.g. Pichu).", (p) => p.baby);
+
+    // Where and when they spawn, from Serebii's "Habitats & Locations". Areas every Pokémon
+    // shares get dropped by the 75% rule below, which leaves the DLC areas.
+    valuesOf("locations").forEach((v) =>
+        add("location", "Found in", v, v, `Pokémon that can spawn in ${v}.`, (p) => p.locations.includes(v)),
+    );
+    const spawnsIn = (p, word) => p.spawnHabitats.some((h) => h.toLowerCase().includes(word));
+    add("spawn", "Spawns in", "tallgrass", "Tall Grass", "Pokémon that spawn in a habitat made with tall grass (any color, e.g. Hydrated tall grass).", (p) => spawnsIn(p, "tall grass"));
+    add("spawn", "Spawns in", "flowers", "Flower Beds", "Pokémon that spawn in a habitat made with flowers (e.g. Pretty flower bed or Field of flowers).", (p) => spawnsIn(p, "flower"));
+    add("time", "Time of day", "night", "Night Only", "Pokémon that only spawn at night, never in the morning, day or evening.", (p) => p.times.length === 1 && p.times[0] === "Night");
+    add("rarity", "Rarity", "rare", "Rare Spawn", "Pokémon that are Rare or Very Rare in at least one of the habitats they spawn in.", (p) => p.rarity.includes("Rare") || p.rarity.includes("Very Rare"));
+    add("rarity", "Rarity", "veryrare", "Very Rare Spawn", "Pokémon that are Very Rare in at least one of the habitats they spawn in.", (p) => p.rarity.includes("Very Rare"));
+    add("status", "Status", "underwater", "Can Go Underwater", "Pokémon marked as underwater capable in the Pokopia dex.", (p) => p.underwater);
+
     add("dual", "Type", "dual", "Dual-Type", "Pokémon with two types (e.g. Charizard, Fire/Flying).", (p) => p.types.length >= 2);
     add("dual", "Type", "mono", "Monotype", "Pokémon with only one type (e.g. Pikachu, Electric).", (p) => p.types.length === 1);
 
@@ -312,7 +327,10 @@ const hasPerfectMatching = (cellAnswers) => findMatching(cellAnswers) !== null;
 
 // Pick a group first so groups with many values (e.g. favorites) don't dominate,
 // and keep one-off categories (dual-type, legendary…) as occasional spice.
-const GROUP_WEIGHTS = { specialty: 3, favorite: 3, type: 3, habitat: 2, flavor: 2, gen: 2, evo: 1, multi: 0.5, dual: 0.5, status: 1.5 };
+const GROUP_WEIGHTS = {
+    specialty: 3, favorite: 3, type: 3, habitat: 2, flavor: 2, gen: 2, evo: 1, multi: 0.5, dual: 0.5, status: 1.5,
+    location: 0.5, spawn: 1, time: 0.5, rarity: 0.4,
+};
 
 // Categories bucketed by rating, then by group, once up front (pickCategory runs thousands of times per grid).
 const BY_RATING = {};
@@ -696,6 +714,11 @@ const FAVORITE_COLORS = {
     "Sharp stuff": "#90a4ae", "Spinning stuff": "#4db6ac", "Blocky stuff": "#ef5350",
 };
 const MULTI_COLOR = "#3fb59a";
+// Spawn categories and one-offs, by category key.
+const KEY_COLORS = {
+    "location:Bubbly Basin": "#3cc6d8", "spawn:tallgrass": "#5aa832", "spawn:flowers": "#f08cbc",
+    "time:night": "#2f3a6b", "rarity:rare": "#e6b422", "rarity:veryrare": "#9b59d0", "status:underwater": "#1c7fc4",
+};
 
 function badgeEl(cat) {
     const badge = document.createElement("span");
@@ -708,7 +731,8 @@ function badgeEl(cat) {
         (cat.group === "habitat" && HABITAT_COLORS[value]) ||
         (cat.group === "specialty" && SPECIALTY_COLORS[value]) ||
         (cat.group === "multi" && MULTI_COLOR) ||
-        (cat.group === "favorite" && FAVORITE_COLORS[value]);
+        (cat.group === "favorite" && FAVORITE_COLORS[value]) ||
+        KEY_COLORS[cat.key];
     if (cat.group === "type") badge.classList.add("type");
     if (cat.group === "favorite" && color) {
         // Tinted chip: the text sits on a light background, so no white-text check.
