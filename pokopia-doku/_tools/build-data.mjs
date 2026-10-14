@@ -106,7 +106,20 @@ function parsePage(html) {
     const flavorRaw = (block.match(/flavors\.shtml"><u>([^<]+)<\/u>/) || [])[1];
     const flavor = flavorRaw ? decode(flavorRaw).replace(/ flavors?$/i, "") : undefined;
 
-    return { types, specialties, habitat: habitat && decode(habitat), favorites, flavor };
+    // "Go Underwater?" is the stats table's last cell: Yes or No.
+    const underwater = /<td class="cen" valign="top">\s*Yes\s*<\/td>\s*<\/tr>/.test(block);
+
+    // "Habitats & Locations": one column per spawn habitat, each with its locations,
+    // rarity, times and weather. Kept as unions across all of a Pokémon's habitats.
+    const spawn = (html.split("<h2>Habitats & Locations</h2>")[1] || "").split("</main>")[0];
+    const locations = [...new Set([...spawn.matchAll(/locations\/[a-z0-9]+\.shtml"><u>([^<]+)<\/u>/g)].map((m) => decode(m[1])))];
+    const rarity = [...new Set([...spawn.matchAll(/<b>Rarity<\/b>:<br \/>\s*([^<]+?)\s*<\/td>/g)].map((m) => decode(m[1])))];
+    const timeWeather = [...spawn.matchAll(/<tr><td valign="top">\s*([\s\S]*?)<\/td><td valign="top">\s*([\s\S]*?)<\/tr>/g)];
+    const split = (s) => s.split(/<br \/>/).map((t) => decode(t.replace(/<[^>]*>/g, ""))).filter(Boolean);
+    const times = [...new Set(timeWeather.flatMap((m) => split(m[1])))];
+    const weather = [...new Set(timeWeather.flatMap((m) => split(m[2])))];
+
+    return { types, specialties, habitat: habitat && decode(habitat), favorites, flavor, underwater, locations, rarity, times, weather };
 }
 
 async function mainline(natDex) {
@@ -151,9 +164,10 @@ for (const row of rows) {
     const id = MERGE[row.slug] || row.slug;
     const existing = byId.get(id);
     if (existing) {
-        for (const k of ["types", "specialties", "favorites"]) existing[k] = union(existing[k], page[k]);
+        for (const k of ["types", "specialties", "favorites", "locations", "rarity", "times", "weather"]) existing[k] = union(existing[k], page[k]);
         existing.habitat ||= page.habitat;
         existing.flavor ||= page.flavor;
+        existing.underwater ||= page.underwater;
         continue;
     }
     const name = MERGED_NAMES[id] || row.name;
@@ -206,7 +220,7 @@ for (const name of specialtyNames) {
 }
 console.log(`specialty descriptions: ${Object.keys(specialties).length}/${specialtyNames.length}`);
 
-const keep = ["id", "name", "dex", "pokopiaNo", "natDex", "types", "specialties", "habitat", "flavor", "favorites", "gen", "legendary", "mythical", "baby", "stage", "fullyEvolved", "inLine"];
+const keep = ["id", "name", "dex", "pokopiaNo", "natDex", "types", "specialties", "habitat", "flavor", "favorites", "locations", "rarity", "times", "weather", "underwater", "gen", "legendary", "mythical", "baby", "stage", "fullyEvolved", "inLine"];
 const lines = dex.map((p) => "    " + JSON.stringify(Object.fromEntries(keep.map((k) => [k, p[k] ?? null]))));
 fs.writeFileSync(
     OUT,
