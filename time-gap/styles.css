@@ -583,10 +583,9 @@ h1 {
         font-size: 0.9rem;
     }
 
-    /* Result and Next sit at the bottom of the screen; the cards grow into the space above */
+    /* Result and Next follow right under the cards; any spare room is left below Next */
     .result {
-        margin: auto 0 8px;
-        padding-top: 8px;
+        margin: 12px 0 8px;
         font-size: 0.9rem;
     }
 
@@ -645,8 +644,7 @@ h1 {
 
     .result {
         min-height: 2.4em;
-        margin-bottom: 6px;
-        padding-top: 4px;
+        margin: 8px 0 6px;
         font-size: 0.85rem;
         line-height: 1.2;
     }
