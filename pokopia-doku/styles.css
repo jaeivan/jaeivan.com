@@ -626,6 +626,15 @@ button.small {
     font-size: .78rem;
 }
 
+.chip.locked {
+    border-style: dashed;
+    color: var(--muted);
+}
+
+.chip:disabled {
+    opacity: .5;
+}
+
 .chip.active {
     background: var(--primary);
     border-color: var(--primary);
