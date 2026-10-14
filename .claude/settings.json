@@ -1,8 +1,39 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes http-server@14.1.1 *)",
+      "Bash(node _tools/logo.mjs)",
+      "Bash(node --check *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch --show-current)",
+      "Bash(git switch -c *)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr merge *)",
+      "mcp__github__create_branch",
+      "mcp__github__create_pull_request",
+      "mcp__github__merge_pull_request",
+      "mcp__github__enable_pr_auto_merge",
+      "mcp__github__push_files",
+      "mcp__github__create_or_update_file",
+      "mcp__github__delete_file"
+    ],
+    "deny": [
+      "Bash(git push * main)",
+      "Bash(git push * HEAD:main)",
+      "Bash(git push * +main)"
+    ]
   },
   "hooks": {
     "SessionStart": [
@@ -11,6 +42,18 @@
           {
             "type": "command",
             "command": "git -C \"$CLAUDE_PROJECT_DIR\" config user.name 'Jaeivan R.' && git -C \"$CLAUDE_PROJECT_DIR\" config user.email '44349654+jaeivan@users.noreply.github.com'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|mcp__github__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\"",
+            "timeout": 10
           }
         ]
       }
