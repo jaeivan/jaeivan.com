@@ -74,7 +74,7 @@ window.TIME_GAP_EVENTS = [
   { year: 1522, label: "Magellan's crew finishes the first trip around the world", cat: "history", emoji: "🌍" },
   { year: 1559, label: "Elizabeth I is crowned", cat: "history", emoji: "👸" },
   { year: 1620, label: "The Mayflower lands in America", cat: "history", emoji: "🚢" },
-  { year: 1653, label: "The Taj Mahal is completed", cat: "history", emoji: "🕌" },
+  { year: 1653, label: "The Taj Mahal is completed", cat: "history", emoji: "🕌", approx: true },
   { year: 1666, label: "The Great Fire of London", cat: "history", emoji: "🔥" },
   { year: 1776, label: "The US Declaration of Independence", cat: "history", emoji: "✍️" },
   { year: 1789, label: "The storming of the Bastille", cat: "history", emoji: "🇫🇷" },
@@ -102,7 +102,7 @@ window.TIME_GAP_EVENTS = [
   { year: 2002, label: "Euro coins and notes go into circulation", cat: "history", emoji: "💶" },
 
   // Tech & science
-  { year: -2000, label: "The last woolly mammoths die out", cat: "tech", emoji: "🦣", approx: true },
+  { year: -2000, label: "The last woolly mammoths die out", cat: "tech", emoji: "🦣", approx: true, fuzz: 350 },
   { year: 105, label: "Paper is invented in China", cat: "tech", emoji: "📃", approx: true },
   { year: 1455, label: "Gutenberg prints his Bible", cat: "tech", emoji: "📖", approx: true },
   { year: 1543, label: "Copernicus says the Earth orbits the Sun", cat: "tech", emoji: "☀️" },
@@ -157,7 +157,7 @@ window.TIME_GAP_EVENTS = [
 
   // Art & books
   { year: -700, label: "Homer's Odyssey is composed", cat: "arts", emoji: "🏺", approx: true },
-  { year: 1320, label: "Dante finishes the Divine Comedy", cat: "arts", emoji: "😈" },
+  { year: 1320, label: "Dante finishes the Divine Comedy", cat: "arts", emoji: "😈", approx: true },
   { year: 1387, label: "Chaucer starts The Canterbury Tales", cat: "arts", emoji: "🐓", approx: true },
   { year: 1452, label: "Leonardo da Vinci is born", cat: "arts", emoji: "🎨" },
   { year: 1503, label: "Leonardo starts painting the Mona Lisa", cat: "arts", emoji: "🖼️" },
@@ -361,7 +361,7 @@ window.TIME_GAP_EVENTS = [
   // Warhammer 40,000
   { year: 14000, label: "Humanity's Dark Age of Technology begins", cat: "wh40k", emoji: "🤖", approx: true, fuzz: 1000 },
   { year: 24000, label: "The Age of Strife plunges humanity into chaos", cat: "wh40k", emoji: "🌪️", approx: true, fuzz: 1000 },
-  { year: 29000, label: "The Fall of the Aeldari tears open the Eye of Terror", cat: "wh40k", emoji: "👁️", approx: true, fuzz: 700 },
+  { year: 29500, label: "The Fall of the Aeldari tears open the Eye of Terror", cat: "wh40k", emoji: "👁️", approx: true, fuzz: 500 },
   { year: 29798, label: "The Emperor launches the Great Crusade", cat: "wh40k", emoji: "🚀" },
   { year: 30000, label: "Horus is named Warmaster after Ullanor", cat: "wh40k", emoji: "🎖️" },
   { year: 30005, label: "The Horus Heresy begins at Isstvan III", cat: "wh40k", emoji: "🐍" },
@@ -494,7 +494,7 @@ window.TIME_GAP_EVENTS = [
   { year: 2007, month: 9, label: "\"Leave Britney Alone!\"", cat: "youtube", emoji: "😭", yt: "kHmvkRoEowc" },
   { year: 2009, month: 1, label: "\"David After Dentist\"", cat: "youtube", emoji: "🦷", yt: "txqiwrbYGrs" },
   { year: 2009, month: 4, label: "Susan Boyle's Britain's Got Talent audition", cat: "youtube", emoji: "🎤" },
-  { year: 2009, month: 4, label: "\"The Duck Song\"", cat: "youtube", emoji: "🦆", yt: "MtN1YnoL46Q" },
+  { year: 2009, month: 3, label: "\"The Duck Song\"", cat: "youtube", emoji: "🦆", yt: "MtN1YnoL46Q" },
   { year: 2009, month: 11, label: "The Muppets' \"Bohemian Rhapsody\"", cat: "youtube", emoji: "🐸", yt: "tgbNymZ7vqY" },
   { year: 2010, month: 1, label: "\"Double Rainbow\"", cat: "youtube", emoji: "🌈", yt: "OQSNhk5ICTI" },
   { year: 2010, month: 7, label: "\"Bed Intruder Song\"", cat: "youtube", emoji: "🛏️", yt: "hMtZfW2z9dw" },
@@ -505,7 +505,6 @@ window.TIME_GAP_EVENTS = [
   { year: 2012, month: 12, label: "\"Gangnam Style\" becomes the first video to hit a billion views", cat: "youtube", emoji: "1️⃣", yt: "9bZkp7q19f0" },
   { year: 2013, month: 2, label: "The \"Harlem Shake\" craze", cat: "youtube", emoji: "🫨", yt: "8vJiSSAMNWw" },
   { year: 2016, month: 2, label: "\"Damn Daniel\"", cat: "youtube", emoji: "👟" },
-  { year: 2016, month: 5, label: "\"Chewbacca Mom\"", cat: "youtube", emoji: "🐻" },
   { year: 2016, month: 6, label: "\"Baby Shark Dance\" is uploaded", cat: "youtube", emoji: "🦈", yt: "XqZsoesa55w" },
   { year: 2016, month: 8, label: "\"Pen-Pineapple-Apple-Pen\"", cat: "youtube", emoji: "🍍", yt: "Ct6BUPvE2sM" },
   { year: 2017, month: 1, label: "MrBeast counts to 100,000", cat: "youtube", emoji: "💯" },
@@ -520,7 +519,7 @@ window.TIME_GAP_EVENTS = [
   // Music videos
   { year: 1967, month: 2, label: "The Beatles' \"Strawberry Fields Forever\" promo film", cat: "mv", emoji: "🍓", yt: "HtUH9z_Oey8" },
   { year: 1975, month: 11, label: "Queen's \"Bohemian Rhapsody\"", cat: "mv", emoji: "👑", yt: "fJ9rUzIMcZQ" },
-  { year: 1981, month: 8, label: "\"Video Killed the Radio Star\", MTV's first video", cat: "mv", emoji: "📺", yt: "W8r-tXRLazs" },
+  { year: 1979, month: 9, label: "\"Video Killed the Radio Star\", later MTV's first video", cat: "mv", emoji: "📺", yt: "W8r-tXRLazs", approx: true },
   { year: 1983, month: 3, label: "Michael Jackson's \"Billie Jean\"", cat: "mv", emoji: "🕴️", yt: "Zi_XLOBDo_Y" },
   { year: 1983, month: 12, label: "Michael Jackson's \"Thriller\"", cat: "mv", emoji: "🧟", yt: "sOnqjkJTMaA" },
   { year: 1986, month: 4, label: "Peter Gabriel's \"Sledgehammer\"", cat: "mv", emoji: "🔨", yt: "OJWJE0x7T4Q" },

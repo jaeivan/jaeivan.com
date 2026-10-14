@@ -92,11 +92,12 @@
 
             var diff = Math.abs(p[0].gap - p[1].gap);
             var slack = four.reduce(function (sum, e) { return sum + fuzz(e); }, 0);
-            if (diff < Math.max(2, slack)) continue;
+            // At exactly `slack` apart, the rough dates could still make the gaps equal.
+            if (diff < 2 || diff <= slack) continue;
 
             // Show the earlier event first in each pair.
             p.forEach(function (q) {
-                if (q.a.year > q.b.year) { var t = q.a; q.a = q.b; q.b = t; }
+                if (pos(q.a) > pos(q.b)) { var t = q.a; q.a = q.b; q.b = t; }
             });
 
             var ratio = Math.max(p[0].gap, p[1].gap) / Math.min(p[0].gap, p[1].gap);
@@ -229,7 +230,8 @@
             });
         });
 
-        var diff = span(Math.abs(round[0].gap - round[1].gap), monthly(round[0].a));
+        var rough = round.some(function (q) { return q.a.approx || q.b.approx; });
+        var diff = (rough ? "about " : "") + span(Math.abs(round[0].gap - round[1].gap), monthly(round[0].a));
         if (right) {
             streak++;
             if (streak > best) { best = streak; saveBest(best); }
