@@ -36,12 +36,10 @@ html {
     touch-action: manipulation;
 }
 
-/* Quick repeated taps shouldn't select text or pop up the iOS callout */
-.pairs,
-.result,
-.next,
-.cats,
-.scores {
+/* Quick repeated taps shouldn't select text or pop up the iOS callout. That covers the whole
+   app: a double tap on empty space would select the nearest text (like the Categories heading)
+   and the phone would scroll down to show the selection. */
+main {
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
