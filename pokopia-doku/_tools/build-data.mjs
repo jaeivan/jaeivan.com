@@ -89,6 +89,8 @@ function parseList(html) {
     return rows;
 }
 
+const sentence = (s) => s[0].toUpperCase() + s.slice(1).toLowerCase();
+
 function parsePage(html) {
     // Types: icons in the first "Type" cell of the general table.
     const typeCell = html.match(/<td class="foo">Type<\/td>[\s\S]*?<td class="cen">([\s\S]*?)<\/td>/);
@@ -101,12 +103,29 @@ function parsePage(html) {
     // Sentence case ("Slender Objects" also appears as "Slender objects"); Ditto lists "None".
     const favorites = [...block.matchAll(/favorites\/[a-z0-9]+\.shtml"><u>([^<]+)<\/u>/g)]
         .map((m) => decode(m[1]))
-        .map((f) => f[0].toUpperCase() + f.slice(1).toLowerCase())
+        .map(sentence)
         .filter((f) => f !== "None");
     const flavorRaw = (block.match(/flavors\.shtml"><u>([^<]+)<\/u>/) || [])[1];
     const flavor = flavorRaw ? decode(flavorRaw).replace(/ flavors?$/i, "") : undefined;
 
-    return { types, specialties, habitat: habitat && decode(habitat), favorites, flavor };
+    // "Go Underwater?": an icon if yes, "No" otherwise.
+    const underwater = block.includes('alt="Underwater Capable"');
+
+    // "Habitats & Locations": one column per spawn habitat (what you build to attract it), each
+    // with its locations, rarity, times and weather. Kept as unions across all of its habitats.
+    // Legendaries and other story Pokémon have no such section.
+    const spawn = (html.split("<h2>Habitats & Locations</h2>")[1] || "").split("</main>")[0];
+    const spawnHabitats = [...new Set([...spawn.matchAll(/<td class="fooevo"><a href="\/pokemonpokopia\/habitatdex\/[a-z0-9]+\.shtml">([^<]+)<\/a>/g)].map((m) => sentence(decode(m[1]))))];
+    const locations = [...new Set([...spawn.matchAll(/locations\/[a-z0-9]+\.shtml"><u>([^<]+)<\/u>/g)].map((m) => decode(m[1])))];
+    // Matched by value: some cells are blank and Tyrogue's reads "CommonCommon".
+    const rarityCells = [...spawn.matchAll(/<b>Rarity<\/b>:<br \/>([^<]*)<\/td>/g)].map((m) => m[1]).join(" ");
+    const rarity = [...new Set(rarityCells.match(/Very Rare|Rare|Common/g) || [])];
+    const timeWeather = [...spawn.matchAll(/<tr><td valign="top">\s*([\s\S]*?)<\/td><td valign="top">\s*([\s\S]*?)<\/tr>/g)];
+    const split = (s) => s.split(/<br \/>/).map((t) => decode(t.replace(/<[^>]*>/g, ""))).filter(Boolean);
+    const times = [...new Set(timeWeather.flatMap((m) => split(m[1])))];
+    const weather = [...new Set(timeWeather.flatMap((m) => split(m[2])))];
+
+    return { types, specialties, habitat: habitat && decode(habitat), favorites, flavor, underwater, spawnHabitats, locations, rarity, times, weather };
 }
 
 async function mainline(natDex) {
@@ -151,9 +170,10 @@ for (const row of rows) {
     const id = MERGE[row.slug] || row.slug;
     const existing = byId.get(id);
     if (existing) {
-        for (const k of ["types", "specialties", "favorites"]) existing[k] = union(existing[k], page[k]);
+        for (const k of ["types", "specialties", "favorites", "spawnHabitats", "locations", "rarity", "times", "weather"]) existing[k] = union(existing[k], page[k]);
         existing.habitat ||= page.habitat;
         existing.flavor ||= page.flavor;
+        existing.underwater ||= page.underwater;
         continue;
     }
     const name = MERGED_NAMES[id] || row.name;
@@ -206,7 +226,7 @@ for (const name of specialtyNames) {
 }
 console.log(`specialty descriptions: ${Object.keys(specialties).length}/${specialtyNames.length}`);
 
-const keep = ["id", "name", "dex", "pokopiaNo", "natDex", "types", "specialties", "habitat", "flavor", "favorites", "gen", "legendary", "mythical", "baby", "stage", "fullyEvolved", "inLine"];
+const keep = ["id", "name", "dex", "pokopiaNo", "natDex", "types", "specialties", "habitat", "flavor", "favorites", "spawnHabitats", "locations", "rarity", "times", "weather", "underwater", "gen", "legendary", "mythical", "baby", "stage", "fullyEvolved", "inLine"];
 const lines = dex.map((p) => "    " + JSON.stringify(Object.fromEntries(keep.map((k) => [k, p[k] ?? null]))));
 fs.writeFileSync(
     OUT,
