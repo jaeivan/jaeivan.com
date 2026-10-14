@@ -243,7 +243,8 @@
         }
         updateScores();
         nextBtn.hidden = false;
-        nextBtn.focus();
+        // No scroll: on phones, focusing would jump the page under a finger that's still tapping.
+        nextBtn.focus({ preventScroll: true });
     }
 
     function updateScores() {
@@ -323,10 +324,13 @@
         });
     });
 
+    // The game area never shrinks between rounds (years and gaps hide again, labels get shorter),
+    // so Next stays put and the picker can't slide up under a finger still tapping where Next was.
     nextBtn.addEventListener("click", function () {
-        pairsEl.style.minHeight = mainEl.style.minHeight = "";
+        mainEl.style.minHeight = "";
+        pairsEl.style.minHeight = pairsEl.offsetHeight + "px";
         newRound();
-        buttons[0].focus();
+        buttons[0].focus({ preventScroll: true });
     });
 
     // Title hourglass (decorative): runs its sand out and flips while hovered with a mouse; a tap,
