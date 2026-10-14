@@ -243,8 +243,14 @@
         }
         updateScores();
         nextBtn.hidden = false;
-        // No scroll: on phones, focusing would jump the page under a finger that's still tapping.
         nextBtn.focus({ preventScroll: true });
+        // On phones Next can sit below the screen: scroll just enough to show it, if needed,
+        // once the revealed years have finished growing the cards (0.3s, see styles.css).
+        var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        setTimeout(function () {
+            if (!answered) return; // already moved on to the next round
+            nextBtn.scrollIntoView({ block: "nearest", behavior: still ? "auto" : "smooth" });
+        }, still ? 0 : 320);
     }
 
     function updateScores() {

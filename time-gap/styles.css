@@ -418,6 +418,7 @@ h1 {
     border: 0;
     border-radius: 999px;
     cursor: pointer;
+    scroll-margin: 16px; /* breathing room when scrolled into view after answering */
 }
 
 /* Keeps its space while hidden, so tapping Next doesn't shift what's below it */
