@@ -27,26 +27,29 @@
     <body>
         <a class="hub-nav" href="../">← All apps</a>
         <main>
-            <header>
-                <h1><span id="hourglass" class="title-hourglass-wrap" role="button" tabindex="0" aria-pressed="false" aria-label="Flip the hourglass"><img class="title-hourglass" src="hourglass-still.gif" alt=""></span>Time Gap</h1>
-                <p class="tagline">Which pair happened <strong>closer together</strong> in time?</p>
-            </header>
+            <!-- On phones this fills the screen, minus a peek of the categories below (styles.css) -->
+            <div class="game">
+                <header>
+                    <h1><span id="hourglass" class="title-hourglass-wrap" role="button" tabindex="0" aria-pressed="false" aria-label="Flip the hourglass"><img class="title-hourglass" src="hourglass-still.gif" alt=""></span>Time Gap</h1>
+                    <p class="tagline">Which pair happened <strong>closer together</strong> in time?</p>
+                </header>
 
-            <div class="scores">
-                <span>Streak <b id="streak">0</b></span>
-                <span>Best <b id="best">0</b></span>
+                <div class="scores">
+                    <span>Streak <b id="streak">0</b></span>
+                    <span>Best <b id="best">0</b></span>
+                </div>
+
+                <p class="special-note" id="note" hidden></p>
+
+                <div class="pairs" id="pairs">
+                    <button type="button" class="pair" data-i="0"></button>
+                    <div class="vs" aria-hidden="true">or</div>
+                    <button type="button" class="pair" data-i="1"></button>
+                </div>
+
+                <p class="result" id="result" aria-live="polite"></p>
+                <button type="button" class="next" id="next" hidden>Next</button>
             </div>
-
-            <p class="special-note" id="note" hidden></p>
-
-            <div class="pairs" id="pairs">
-                <button type="button" class="pair" data-i="0"></button>
-                <div class="vs" aria-hidden="true">or</div>
-                <button type="button" class="pair" data-i="1"></button>
-            </div>
-
-            <p class="result" id="result" aria-live="polite"></p>
-            <button type="button" class="next" id="next" hidden>Next</button>
 
             <section class="picker" aria-labelledby="cats-heading">
                 <p class="cats-heading" id="cats-heading">Categories</p>
