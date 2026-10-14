@@ -216,8 +216,20 @@ h1 {
     border: 2px solid var(--border);
     border-radius: 16px;
     box-shadow: var(--shadow);
+    position: relative;
     cursor: pointer;
     transition: transform 0.15s, border-color 0.15s, background-color 0.2s;
+}
+
+/* The hover lift moves the card up; this strip keeps its old bottom edge clickable,
+   or a cursor there would fall off, drop the card back, and the click would miss. */
+.pair::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: -6px;
+    height: 6px;
 }
 
 .pair:not(:disabled):hover {

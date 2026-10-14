@@ -302,17 +302,29 @@
         streak = 0;
         updateScores();
         newRound();
-
-        // The picker sits below the game, so bring the new round into view.
-        var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        window.scrollTo({ top: 0, behavior: still ? "auto" : "smooth" });
     }
 
+    // The new round can be taller or shorter than the last one, which would shift the picker
+    // below it. Keep the tapped button put under the finger by scrolling by the shift. When the
+    // page is too short to scroll that far, hold some extra height until the next round.
+    var mainEl = document.querySelector("main");
     catButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () { setCategory(btn.dataset.cat); });
+        btn.addEventListener("click", function () {
+            var top = btn.getBoundingClientRect().top;
+            setCategory(btn.dataset.cat);
+            var shift = btn.getBoundingClientRect().top - top;
+            // Grew: make room below so the page can scroll down far enough.
+            var short = window.scrollY + window.innerHeight + shift - document.documentElement.scrollHeight;
+            if (shift > 0 && short > 0) mainEl.style.minHeight = mainEl.offsetHeight + short + "px";
+            window.scrollBy(0, shift);
+            // Shrank near the top: keep the game area tall instead.
+            var left = top - btn.getBoundingClientRect().top;
+            if (left > 0.5) pairsEl.style.minHeight = pairsEl.offsetHeight + left + "px";
+        });
     });
 
     nextBtn.addEventListener("click", function () {
+        pairsEl.style.minHeight = mainEl.style.minHeight = "";
         newRound();
         buttons[0].focus();
     });

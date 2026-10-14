@@ -48,6 +48,6 @@ window.HUB_APPS = [
     thumbnailStill: "tile-still.gif",
     color: "#DDF0E4",
     created: "2026-10-13",
-    updated: "2026-10-13",
+    updated: "2026-10-14",
   },
 ];
