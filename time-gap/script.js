@@ -348,6 +348,20 @@
         buttons[0].focus({ preventScroll: true });
     });
 
+    // iPhone Safari ignores `touch-action: manipulation` for a double tap on plain content and
+    // scrolls to center the tapped section. Cancel the second tap of a quick pair unless it's on
+    // something tappable, so a double tap on empty space (or on Next, which hides after the
+    // first tap) leaves the page where it is.
+    var lastTap = 0;
+    document.addEventListener("touchend", function (e) {
+        var now = performance.now();
+        var quick = now - lastTap < 350;
+        lastTap = now;
+        if (quick && e.cancelable && !e.target.closest("button:not(:disabled), a, [role='button']")) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
     // Title hourglass (decorative): runs its sand out and flips while hovered with a mouse; a tap,
     // click, Enter or Space toggles it on so it keeps going, and another stops it (even mid-hover).
     // Swapping the image restarts the GIF, so it's only swapped when the animation really starts
