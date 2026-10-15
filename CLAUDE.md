@@ -6,7 +6,7 @@ No build step, no framework and no npm dependencies. Keep it that way. The only 
 
 ## Deploying
 
-GitHub Pages publishes `main` to jaeivan.com, so anything merged into `main` goes live right away. IMPORTANT: never commit or push to `main` directly. Every change goes through a PR from its own branch:
+Cloudflare Workers (static assets only, set up in `wrangler.jsonc`) publishes `main` to jaeivan.com, so anything merged into `main` goes live right away. Every other branch gets its own preview URL on workers.dev, which Cloudflare posts on the branch's PR. IMPORTANT: never commit or push to `main` directly. Every change goes through a PR from its own branch:
 
 - Start each branch from the latest `main`, with one app or feature per branch. Name it `<slug>-<change>` or `<area>-<change>`, e.g. `time-gap-fix-dates` or `hub-footer-links`.
 - Once a branch's PR is merged, don't add to it. Start a new branch from `main` for follow-up work.
@@ -18,7 +18,7 @@ Don't mention Claude, Claude Code or AI anywhere in commits, branch names, PR ti
 
 Write every PR description from `.github/pull_request_template.md`: keep its headings, fill each section, tick only the checks you actually did, delete lines that don't apply, and delete the HTML comments.
 
-Everything committed outside `_`-prefixed folders is published. Keep screenshots, test pages and other scratch files out of the repo.
+Everything committed is published except what `.assetsignore` lists: dotfiles, anything starting with `_` (such as `_template/` and every `_tools/`), Markdown files, `CNAME` and `wrangler.jsonc`. If you add a file that must stay private, add it there. Keep screenshots, test pages and other scratch files out of the repo.
 
 ## Adding an app
 
@@ -46,7 +46,7 @@ Edit the generator and rerun it (from the repo root) instead of editing these by
 ## Rules
 
 - Apps must stay fully independent: never import another app's files, and never change `hub/` or `shared/` for one app's needs.
-- Use relative paths only (`../shared/...`, `script.js`). Never use root-absolute `/...` paths. The exceptions are `sitemap.xml`, `robots.txt`, canonical and `og:` tags, which need full `https://jaeivan.com/...` URLs, and `404.html` (plus its `404.gif`): GitHub Pages serves it at any missing path, so it links to `/` and `/shared/...`.
+- Use relative paths only (`../shared/...`, `script.js`). Never use root-absolute `/...` paths. The exceptions are `sitemap.xml`, `robots.txt`, canonical and `og:` tags, which need full `https://jaeivan.com/...` URLs, and `404.html` (plus its `404.gif`): Cloudflare serves it at any missing path, so it links to `/` and `/shared/...`.
 - Anything added to `shared/` must use a class prefix so its styles can't leak into apps.
 - Every app must work at phone width (375px) with no horizontal scroll.
 - Interactive elements must work with a keyboard: use real buttons, or add `tabindex`, `role` and Enter/Space handling.
@@ -61,4 +61,4 @@ The `../` back links need a server, not `file://`. Use the `site` preview in `.c
 - it looks right in light and dark mode (the top-right toggle)
 - new controls work with a keyboard
 
-Then run `node --check` on any JS file you changed, and `git status` to make sure no screenshots or scratch files are staged.
+Then run `node --check` on any JS file you changed, and `git status` to make sure no screenshots or scratch files are staged. After pushing, repeat the browser checks on the PR's preview URL, on a real phone too.
