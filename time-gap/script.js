@@ -127,6 +127,8 @@
             y = e.year > 0 ? e.year.toLocaleString("en-US") + " ABY" : (-e.year).toLocaleString("en-US") + " BBY";
         } else if (dates === "age") {
             y = "Age " + e.year;
+        } else if (dates === "naruto") {
+            y = e.year < 0 ? plural(-e.year, "year") + " before Naruto" : "Naruto age " + e.year;
         } else {
             y = e.year < 0 ? -e.year + " BC" : e.year < 1000 ? "AD " + e.year : String(e.year);
         }

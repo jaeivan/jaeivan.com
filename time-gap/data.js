@@ -25,6 +25,8 @@ window.TIME_GAP_CATEGORIES = [
     note: "BBY and ABY mean before and after the Battle of Yavin, when the first Death Star blew up." },
   { id: "dragonball", label: "Dragon Ball", emoji: "🐉", special: true, dates: "age",
     note: "Dates use Dragon Ball's Age calendar: Goku meets Bulma in Age 749." },
+  { id: "naruto", label: "Naruto", emoji: "🍥", special: true, dates: "naruto",
+    note: "Years count from Naruto's birth, the night the Nine-Tails attacked the Hidden Leaf." },
 ];
 
 /*
@@ -34,7 +36,8 @@ window.TIME_GAP_CATEGORIES = [
  * the game avoids rounds where that fuzziness could flip the answer. `fuzz` overrides how
  * many years off a rough date might be (default 100 for BC, 25 for AD).
  * Fictional years count straight through with a year 0: Warhammer's 999.M41 is 40999,
- * Star Wars uses negative for BBY (19 BBY = -19) and positive for ABY, and Dragon Ball's Age 749 is 749.
+ * Star Wars uses negative for BBY (19 BBY = -19) and positive for ABY, Dragon Ball's Age 749 is 749,
+ * and Naruto counts years from Naruto's birth (12 = Naruto is 12, -14 = 14 years before he's born).
  * Categories with `dates: "month"` also need `month` (1-12); their gaps and `fuzz` are in months.
  * `yt` is a YouTube video ID: the card shows that video's thumbnail instead of the emoji
  * (the emoji is the fallback if the thumbnail can't load).
@@ -552,4 +555,33 @@ window.TIME_GAP_EVENTS = [
   { year: 2022, month: 10, label: "Taylor Swift's \"Anti-Hero\"", cat: "mv", emoji: "🪞", yt: "b1kbLwvqugk" },
   { year: 2024, month: 7, label: "Kendrick Lamar's \"Not Like Us\"", cat: "mv", emoji: "🦉", yt: "H58vbez_m4E" },
   { year: 2024, month: 10, label: "ROSÉ and Bruno Mars' \"APT.\"", cat: "mv", emoji: "🍻", yt: "ekr2nIex040" },
+  // Naruto
+  { year: -1000, label: "Hagoromo, the Sage of Six Paths, spreads ninshū", cat: "naruto", emoji: "☯️", approx: true, fuzz: 200 },
+  { year: -70, label: "Hashirama and Madara found the Hidden Leaf", cat: "naruto", emoji: "🍃", approx: true, fuzz: 10 },
+  { year: -57, label: "Hiruzen Sarutobi (the Third Hokage) is born", cat: "naruto", emoji: "🐒" },
+  { year: -38, label: "Jiraiya is born", cat: "naruto", emoji: "🐸" },
+  { year: -19, label: "Nagato is born", cat: "naruto", emoji: "🌀" },
+  { year: -14, label: "Kakashi Hatake is born", cat: "naruto", emoji: "🐺" },
+  { year: -9, label: "Kakashi graduates from the Academy at age 5", cat: "naruto", emoji: "🎓" },
+  { year: -9, label: "Jiraiya takes in Nagato, Yahiko and Konan", cat: "naruto", emoji: "☂️", approx: true, fuzz: 3 },
+  { year: -5, label: "Itachi Uchiha is born", cat: "naruto", emoji: "🐦‍⬛" },
+  { year: -1, label: "Obito is crushed under a boulder at Kannabi Bridge", cat: "naruto", emoji: "🪨" },
+  { year: 0, label: "The Nine-Tails attacks and Minato seals it inside baby Naruto", cat: "naruto", emoji: "🦊" },
+  { year: 3, label: "Neji's father dies after the Hyuga affair", cat: "naruto", emoji: "👁️" },
+  { year: 8, label: "Itachi wipes out the Uchiha clan", cat: "naruto", emoji: "🩸" },
+  { year: 12, label: "Team 7 fights Zabuza and Haku", cat: "naruto", emoji: "🌉" },
+  { year: 12, label: "The Third Hokage dies stopping Orochimaru", cat: "naruto", emoji: "🐍" },
+  { year: 12, label: "Sasuke leaves the Hidden Leaf for Orochimaru", cat: "naruto", emoji: "⚡" },
+  { year: 15, label: "Naruto comes home from training with Jiraiya", cat: "naruto", emoji: "🎒" },
+  { year: 15, label: "The Akatsuki kidnap Gaara, the new Kazekage", cat: "naruto", emoji: "⏳" },
+  { year: 16, label: "Jiraiya dies fighting Pain", cat: "naruto", emoji: "🪦" },
+  { year: 16, label: "Itachi dies fighting Sasuke", cat: "naruto", emoji: "🌧️" },
+  { year: 16, label: "Pain destroys the Hidden Leaf", cat: "naruto", emoji: "💥" },
+  { year: 16, label: "Naruto and Sasuke's last fight at the Valley of the End", cat: "naruto", emoji: "🤝" },
+  { year: 19, label: "Naruto saves Hinata from Toneri (The Last)", cat: "naruto", emoji: "🌕" },
+  { year: 20, label: "Boruto is born", cat: "naruto", emoji: "👦", approx: true, fuzz: 1 },
+  { year: 29, label: "Naruto becomes the Seventh Hokage", cat: "naruto", emoji: "🏯", approx: true, fuzz: 3 },
+  { year: 32, label: "Momoshiki kidnaps Naruto at the Chunin Exams (Boruto)", cat: "naruto", emoji: "👽" },
+  { year: 33, label: "Kurama dies after the fight with Isshiki", cat: "naruto", emoji: "🧡" },
+  { year: 36, label: "Boruto comes back after a three-year time skip (Two Blue Vortex)", cat: "naruto", emoji: "🔵", approx: true, fuzz: 1 },
 ];
