@@ -125,6 +125,8 @@
             y = MONTHS[e.month - 1] + " " + e.year;
         } else if (dates === "yavin") {
             y = e.year > 0 ? e.year.toLocaleString("en-US") + " ABY" : (-e.year).toLocaleString("en-US") + " BBY";
+        } else if (dates === "ago") {
+            y = e.year === 0 ? "The present" : plural(-e.year, "year") + " ago";
         } else if (dates === "age") {
             y = "Age " + e.year;
         } else if (dates === "naruto") {
