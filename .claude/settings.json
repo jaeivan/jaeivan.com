@@ -15,9 +15,7 @@
       "Bash(git log*)",
       "Bash(git show*)",
       "Bash(git branch --show-current)",
-      "Bash(git switch -c *)"
-    ],
-    "ask": [
+      "Bash(git switch -c *)",
       "Bash(git push*)",
       "Bash(gh pr create*)",
       "Bash(gh pr merge *)",
