@@ -538,6 +538,7 @@ function browseHeadersFromSquares(unlocked = []) {
 }
 
 function startDaily() {
+    stashUnlimited();
     state.mode = "daily";
     state.date = todayString();
     state.difficulty = WEEKDAY_DIFFICULTY[weekdayOf(state.date)];
@@ -566,10 +567,29 @@ function dailyGrid(date, difficulty) {
     throw new Error(`No valid ${difficulty} grid for ${date}`);
 }
 
-function startUnlimited(difficulty = state.unlimitedDifficulty) {
+// Unlimited grids in progress, one per difficulty, so switching difficulty (or to Daily) and
+// back returns to the same grid. Only New grid replaces one. Kept for this visit only.
+const unlimitedGames = {};
+
+function stashUnlimited() {
+    if (state.mode !== "unlimited" || !state.grid) return;
+    const { grid, cells, missed, guessesLeft, gaveUp, hintsUsed, hintTiers, hintTargets, browseHeaders } = state;
+    unlimitedGames[state.difficulty] = { grid, cells, missed, guessesLeft, gaveUp, hintsUsed, hintTiers, hintTargets, browseHeaders };
+}
+
+function startUnlimited(difficulty = state.unlimitedDifficulty, fresh = false) {
+    stashUnlimited();
+    closePicker();
     state.mode = "unlimited";
     state.difficulty = state.unlimitedDifficulty = difficulty;
     storageSet(DIFFICULTY_PREF_KEY, difficulty);
+    const saved = !fresh && unlimitedGames[difficulty];
+    if (saved) {
+        state.grid = saved.grid;
+        resetProgress(saved);
+        render();
+        return;
+    }
     let grid = null;
     // With themes on, try every theme in random order until one makes a valid grid.
     const themes = themePrefs.enabled ? ALL_THEMES : [];
@@ -1143,14 +1163,14 @@ document.addEventListener("keydown", (e) => {
 });
 $("dailyTab").addEventListener("click", startDaily);
 $("unlimitedTab").addEventListener("click", () => state.mode !== "unlimited" && startUnlimited());
-$("newGridBtn").addEventListener("click", () => startUnlimited());
+$("newGridBtn").addEventListener("click", () => startUnlimited(state.difficulty, true));
 document.querySelectorAll("#difficultyTabs .tab").forEach((b) =>
     b.addEventListener("click", () => startUnlimited(b.dataset.difficulty)),
 );
 $("themesToggle").addEventListener("change", (e) => {
     themePrefs.enabled = e.target.checked;
     saveThemePrefs();
-    renderThemeOptions(); // takes effect on the next grid (difficulty switch or New grid)
+    renderThemeOptions(); // takes effect on the next grid (New grid, or a difficulty not played yet)
 });
 $("giveUpBtn").addEventListener("click", () => {
     if (!confirm("Give up and reveal answers?")) return;

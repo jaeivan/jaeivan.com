@@ -38,7 +38,7 @@ window.HUB_APPS = [
     thumbnailStill: "tile-still.gif",
     color: "#EBE1F6",
     created: "2026-10-12",
-    updated: "2026-10-14",
+    updated: "2026-10-15",
   },
   {
     slug: "time-gap",
