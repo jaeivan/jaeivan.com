@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Video Gap · which videos came out closer together?</title>
+        <link rel="icon" href="favicon.gif" type="image/gif">
+        <link rel="apple-touch-icon" href="icon.png">
+        <meta name="description" content="Two pairs of a YouTuber's videos, starting with PewDiePie: guess which pair was uploaded closer together in time.">
+        <link rel="canonical" href="https://jaeivan.com/video-gap/">
+        <!-- Link previews need full URLs (crawlers don't resolve relative paths) -->
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="jaeivan">
+        <meta property="og:url" content="https://jaeivan.com/video-gap/">
+        <meta property="og:title" content="Video Gap">
+        <meta property="og:description" content="Two pairs of a YouTuber's videos, starting with PewDiePie: guess which pair was uploaded closer together in time.">
+        <meta property="og:image" content="https://jaeivan.com/video-gap/icon.png">
+        <meta property="og:image:width" content="180">
+        <meta property="og:image:height" content="180">
+        <meta name="twitter:card" content="summary">
+        <!-- Site-wide light/dark mode + Auto/Light/Dark toggle. Keep these so the app matches the rest of the site. -->
+        <link rel="stylesheet" href="../shared/theme.css">
+        <script src="../shared/theme.js"></script>
+        <link rel="stylesheet" href="../shared/hub-nav.css">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <a class="hub-nav" href="../">← All apps</a>
+        <main>
+            <!-- On phones this fills the screen, minus a peek of the channels below (styles.css) -->
+            <div class="game">
+                <header>
+                    <h1><span id="play" class="title-play-wrap" role="button" tabindex="0" aria-pressed="false" aria-label="Wake up the play button"><img class="title-play" src="play-still.gif" alt=""></span>Video Gap</h1>
+                    <p class="tagline">Which pair of videos came out <strong>closer together</strong>?</p>
+                </header>
+
+                <div class="scores">
+                    <span>Streak <b id="streak">0</b></span>
+                    <span>Best <b id="best">0</b></span>
+                </div>
+
+                <div class="pairs" id="pairs">
+                    <button type="button" class="pair" data-i="0"></button>
+                    <div class="vs" aria-hidden="true">or</div>
+                    <button type="button" class="pair" data-i="1"></button>
+                </div>
+
+                <p class="result" id="result" aria-live="polite"></p>
+                <button type="button" class="next" id="next" hidden>Next</button>
+            </div>
+
+            <section class="picker" aria-labelledby="channels-heading">
+                <p class="cats-heading" id="channels-heading">Channels</p>
+                <div class="cats" id="channels" role="group" aria-labelledby="channels-heading"></div>
+                <p class="picker-note">Dates are when each video was uploaded, to the month.</p>
+            </section>
+        </main>
+        <script src="data.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>

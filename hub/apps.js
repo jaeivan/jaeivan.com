@@ -50,4 +50,13 @@ window.HUB_APPS = [
     created: "2026-10-13",
     updated: "2026-10-14",
   },
+  {
+    slug: "video-gap",
+    title: "Video Gap",
+    thumbnail: "tile.gif",
+    thumbnailStill: "tile-still.gif",
+    color: "#FBE0E0",
+    created: "2026-10-14",
+    updated: "2026-10-14",
+  },
 ];
