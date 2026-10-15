@@ -34,6 +34,8 @@ Whenever you change an existing app, in the same PR:
 - bump its `updated` date in `hub/apps.js` (the hub shows an "Updated" badge for a week, next to "New" if the app is also new, and an "Old" badge once it goes a year without one)
 - bump its `<lastmod>` in `sitemap.xml` to the same date
 
+Dates in `hub/apps.js` and `sitemap.xml` are US Central (America/Chicago) dates, not UTC: get today's with `node -e "console.log(new Date().toLocaleDateString('en-CA',{timeZone:'America/Chicago'}))"`. A UTC date runs a day ahead in the evening, and the hub shows a future date as a plain date instead of "today".
+
 ## Generated files
 
 Edit the generator and rerun it (from the repo root) instead of editing these by hand:
