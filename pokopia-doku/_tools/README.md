@@ -58,3 +58,5 @@ All in `pokopia-doku/script.js`:
 - `WEEKDAY_DIFFICULTY`: which difficulty each weekday's Daily uses.
 - `GROUP_RATINGS` / `RATING_OVERRIDES`: how hard each category is (1 easy to 3 hard).
   Categories with fewer than 12 Pokémon get +1 automatically.
+- `OBVIOUS_COVERAGE` / `OBVIOUS_LIFT` / `OBVIOUS_REROLL`: how rarely squares whose two
+  categories mostly overlap (e.g. Water specialty × Water type) show up.
