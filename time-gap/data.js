@@ -78,6 +78,7 @@ window.TIME_GAP_EVENTS = [
   { year: 1666, label: "The Great Fire of London", cat: "history", emoji: "🔥" },
   { year: 1776, label: "The US Declaration of Independence", cat: "history", emoji: "✍️" },
   { year: 1789, label: "The storming of the Bastille", cat: "history", emoji: "🇫🇷" },
+  { year: 1799, label: "French soldiers dig up the Rosetta Stone", cat: "history", emoji: "🔤" },
   { year: 1804, label: "Napoleon crowns himself emperor", cat: "history", emoji: "🤴" },
   { year: 1815, label: "The Battle of Waterloo", cat: "history", emoji: "⚔️" },
   { year: 1865, label: "Abraham Lincoln is assassinated", cat: "history", emoji: "🎩" },
