@@ -1,18 +1,21 @@
 # jaeivan.com
 
-A hub of small, independent web apps. Plain static HTML/CSS/JS, served by GitHub Pages.
+A hub of small, independent web apps. Plain static HTML/CSS/JS, served by Cloudflare Workers.
 
 ## Layout
 
 ```
 index.html       Hub home page (grid of app tiles)
 404.html         "Page not found" page with the logo glitching out (404.gif)
+wrangler.jsonc   Cloudflare config: serves the repo root as static files
+.assetsignore    Files Cloudflare must not publish (dotfiles, _folders, Markdown, CNAME)
+_headers         Adds noindex to the workers.dev preview URLs
 robots.txt       Lets search engines crawl everything and points them at sitemap.xml
 sitemap.xml      Every page's full URL, for search engines (add new apps here)
 hub/             App registry (apps.js), tile rendering and hub styles
 shared/          hub-nav.css ("← All apps" button) and theme.js/.css (light/dark mode, used by every page)
-_template/       Starter files for a new app (ignored by GitHub Pages)
-_tools/          Build helpers, e.g. the pixel-art GIF encoder (ignored by GitHub Pages)
+_template/       Starter files for a new app (never published)
+_tools/          Build helpers, e.g. the pixel-art GIF encoder (never published)
 <slug>/          One self-contained folder per app: marker-picker/, pokopia-doku/, time-gap/
 ```
 
@@ -44,6 +47,10 @@ It goes live at `jaeivan.com/<slug>/`.
 ## Logo, favicon and link previews
 
 `node _tools/logo.mjs` redraws the hub logo (`hub/logo.gif` waves and spins on hover or click, `hub/logo-still.gif` at rest; keep `LOGO_LOOP_MS` in `hub/hub.js` in sync with the loop length it prints), `favicon.gif`, the link-preview card `og.png` and the glitching 404 logo `404.gif`. The `og:` tags in `index.html` use full `https://jaeivan.com/...` URLs because link-preview crawlers need them.
+
+## Hosting
+
+Cloudflare Workers Builds is connected to this repo. Merging into `main` deploys jaeivan.com; pushing any other branch builds a preview at its own workers.dev URL, linked on the PR. There's no build step: Cloudflare runs `npx wrangler deploy`, which uploads the files as they are.
 
 ## Running locally
 
