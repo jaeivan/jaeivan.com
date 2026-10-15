@@ -10,7 +10,7 @@ GitHub Pages publishes `main` to jaeivan.com, so anything merged into `main` goe
 
 - Start each branch from the latest `main`, with one app or feature per branch. Name it `<slug>-<change>` or `<area>-<change>`, e.g. `time-gap-fix-dates` or `hub-footer-links`.
 - Once a branch's PR is merged, don't add to it. Start a new branch from `main` for follow-up work.
-- Pushing branches, opening PRs and merging them are pre-approved (`.claude/settings.json` allows them). Pushing or committing to `main` itself stays blocked.
+- Staging, committing, pushing branches, opening PRs and merging them are pre-approved (`.claude/settings.json` allows them). The rules match by command prefix, so run each git or gh step as its own command, not chained with `&&`. Pushing or committing to `main` itself stays blocked.
 
 Don't mention Claude, Claude Code or AI anywhere in commits, branch names, PR titles, PR descriptions or GitHub comments: no `Co-Authored-By` or `Claude-Session` lines, no "Generated with Claude Code" footers, no `claude/` branch prefix. `.claude/settings.json` turns the automatic attribution off and, at session start, sets the git author to jaeivan (GitHub noreply email). This rule covers everything else.
 
