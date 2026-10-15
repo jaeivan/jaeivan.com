@@ -1,0 +1,8 @@
+# Wrangler publishes every file in the repo unless it matches a line here.
+# GitHub Pages (Jekyll) skipped dotfiles and _folders on its own; this keeps
+# that behavior.
+.*
+_*
+*.md
+CNAME
+wrangler.jsonc

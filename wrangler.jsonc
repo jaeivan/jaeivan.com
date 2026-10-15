@@ -1,0 +1,12 @@
+// Cloudflare Workers config. There's no Worker script: Cloudflare serves the
+// repo root as static files, like GitHub Pages did. See .assetsignore for
+// what stays private.
+{
+  "name": "jaeivan-com",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": ".",
+    "not_found_handling": "404-page"
+  },
+  "preview_urls": true
+}

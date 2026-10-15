@@ -1,0 +1,4 @@
+# Keep the workers.dev production and preview URLs out of search engines.
+# jaeivan.com itself is unaffected.
+https://:name.:subdomain.workers.dev/*
+  X-Robots-Tag: noindex
