@@ -25,6 +25,8 @@ window.TIME_GAP_CATEGORIES = [
     note: "BBY and ABY mean before and after the Battle of Yavin, when the first Death Star blew up." },
   { id: "dragonball", label: "Dragon Ball", emoji: "🐉", special: true, dates: "age",
     note: "Dates use Dragon Ball's Age calendar: Goku meets Bulma in Age 749." },
+  { id: "onepiece", label: "One Piece", emoji: "🏴‍☠️", special: true, dates: "ago",
+    note: "Dates count back from the story's present, after the two-year timeskip." },
 ];
 
 /*
@@ -35,6 +37,7 @@ window.TIME_GAP_CATEGORIES = [
  * many years off a rough date might be (default 100 for BC, 25 for AD).
  * Fictional years count straight through with a year 0: Warhammer's 999.M41 is 40999,
  * Star Wars uses negative for BBY (19 BBY = -19) and positive for ABY, and Dragon Ball's Age 749 is 749.
+ * One Piece counts back from the story's present: 24 years ago is -24 and the present is 0.
  * Categories with `dates: "month"` also need `month` (1-12); their gaps and `fuzz` are in months.
  * `yt` is a YouTube video ID: the card shows that video's thumbnail instead of the emoji
  * (the emoji is the fallback if the thumbnail can't load).
@@ -78,7 +81,6 @@ window.TIME_GAP_EVENTS = [
   { year: 1666, label: "The Great Fire of London", cat: "history", emoji: "🔥" },
   { year: 1776, label: "The US Declaration of Independence", cat: "history", emoji: "✍️" },
   { year: 1789, label: "The storming of the Bastille", cat: "history", emoji: "🇫🇷" },
-  { year: 1799, label: "French soldiers dig up the Rosetta Stone", cat: "history", emoji: "🔤" },
   { year: 1804, label: "Napoleon crowns himself emperor", cat: "history", emoji: "🤴" },
   { year: 1815, label: "The Battle of Waterloo", cat: "history", emoji: "⚔️" },
   { year: 1865, label: "Abraham Lincoln is assassinated", cat: "history", emoji: "🎩" },
@@ -482,6 +484,27 @@ window.TIME_GAP_EVENTS = [
   { year: 775, label: "Goku, Kibito Kai and Glorio set off for the Demon Realm (Daima)", cat: "dragonball", emoji: "🚀", approx: true, fuzz: 2 },
   { year: 775, label: "Vegeta reaches Super Saiyan 3 in the Demon Realm (Daima)", cat: "dragonball", emoji: "🌩️", approx: true, fuzz: 2 },
   { year: 775, label: "Goku turns Super Saiyan 4 to beat Gomah (Daima)", cat: "dragonball", emoji: "🐵", approx: true, fuzz: 2 },
+  // One Piece
+  { year: -900, label: "The Void Century begins", cat: "onepiece", emoji: "🕳️", approx: true, fuzz: 20 },
+  { year: -800, label: "The World Government is founded as the Void Century ends", cat: "onepiece", emoji: "🌐", approx: true, fuzz: 10 },
+  { year: -402, label: "Noland finds the city of gold on Jaya", cat: "onepiece", emoji: "🔔", approx: true, fuzz: 2 },
+  { year: -52, label: "Laboon starts waiting for Brook's crew at Reverse Mountain", cat: "onepiece", emoji: "🐋" },
+  { year: -38, label: "The God Valley Incident breaks up the Rocks Pirates", cat: "onepiece", emoji: "⛰️" },
+  { year: -25, label: "Gol D. Roger reaches Laugh Tale", cat: "onepiece", emoji: "🏝️" },
+  { year: -24, label: "Gol D. Roger is executed and the Great Pirate Era begins", cat: "onepiece", emoji: "⚔️" },
+  { year: -22, label: "A Buster Call wipes out Ohara", cat: "onepiece", emoji: "📚" },
+  { year: -22, label: "Portgas D. Ace is born", cat: "onepiece", emoji: "🔥" },
+  { year: -20, label: "Kozuki Oden is boiled alive in Wano", cat: "onepiece", emoji: "🍢" },
+  { year: -19, label: "Monkey D. Luffy is born", cat: "onepiece", emoji: "👶" },
+  { year: -18, label: "Fisher Tiger frees the slaves of Mary Geoise", cat: "onepiece", emoji: "🐯", approx: true, fuzz: 1 },
+  { year: -15, label: "Law eats the Op-Op Fruit and Corazon dies", cat: "onepiece", emoji: "❤️" },
+  { year: -12, label: "Shanks gives Luffy his straw hat", cat: "onepiece", emoji: "👒" },
+  { year: -10, label: "Arlong takes over Nami's village", cat: "onepiece", emoji: "🦈" },
+  { year: -9, label: "Sabo's boat is shot down by a Celestial Dragon", cat: "onepiece", emoji: "🎩" },
+  { year: -2, label: "Luffy sets sail and meets Zoro", cat: "onepiece", emoji: "⛵" },
+  { year: -2, label: "Ace and Whitebeard die in the war at Marineford", cat: "onepiece", emoji: "🌊" },
+  { year: 0, label: "The Straw Hats reunite at Sabaody after the timeskip", cat: "onepiece", emoji: "🫧" },
+  { year: 0, label: "Luffy awakens Gear 5 and beats Kaido in Wano", cat: "onepiece", emoji: "☀️" },
   // YouTube videos
   { year: 2005, month: 4, label: "\"Me at the zoo\", the first YouTube video", cat: "youtube", emoji: "🐘", yt: "jNQXAC9IVRw" },
   { year: 2005, month: 12, label: "SNL's \"Lazy Sunday\" goes viral", cat: "youtube", emoji: "🧁" },
