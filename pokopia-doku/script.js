@@ -326,6 +326,20 @@ function findMatching(cellAnswers, exclude = new Set()) {
 
 const hasPerfectMatching = (cellAnswers) => findMatching(cellAnswers) !== null;
 
+// A square is "obvious" when its two categories mostly mean the same thing (e.g. Water
+// specialty × Water type): most of the smaller one falls inside the other (coverage), and
+// far more than chance would give (lift). Grids get rerolled for each obvious square
+// OBVIOUS_REROLL of the time, so these pairs still turn up, just rarely.
+const OBVIOUS_COVERAGE = 0.75;
+const OBVIOUS_LIFT = 2.5;
+const OBVIOUS_REROLL = 0.85;
+
+function isObvious(a, b, overlap) {
+    const coverage = overlap / Math.min(a.answers.length, b.answers.length);
+    const lift = (overlap * DEX.length) / (a.answers.length * b.answers.length);
+    return coverage >= OBVIOUS_COVERAGE && lift >= OBVIOUS_LIFT;
+}
+
 // Pick a group first so groups with many values (e.g. favorites) don't dominate,
 // and keep one-off categories (dual-type, legendary…) as occasional spice.
 const GROUP_WEIGHTS = {
@@ -385,6 +399,7 @@ function generateGrid(seedString, difficulty, theme = null) {
                 const min = themed ? 2 : small ? Math.min(cfg.minCell, 3) : cfg.minCell;
                 const max = themed ? Infinity : cfg.maxCell;
                 if (answers.length < min || answers.length > max) ok = false;
+                else if (!themed && isObvious(r, c, answers.length) && rng() < OBVIOUS_REROLL) ok = false;
                 cellAnswers.push(answers);
             }
         }
